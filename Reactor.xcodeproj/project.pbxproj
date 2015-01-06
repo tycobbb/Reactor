@@ -13,6 +13,9 @@
 		10F2BCE31A5B9F2300A0D26C /* MTRAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCDC1A5B9F2300A0D26C /* MTRAppDelegate.m */; };
 		10F2BCE41A5B9F2300A0D26C /* MTRMainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10F2BCDD1A5B9F2300A0D26C /* MTRMainStoryboard.storyboard */; };
 		10F2BCE51A5B9F2300A0D26C /* MTRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCDF1A5B9F2300A0D26C /* MTRViewController.m */; };
+		10F2BCE81A5BA03F00A0D26C /* MTRReactor.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */; };
+		10F2BCEB1A5BA04F00A0D26C /* MTRDependency.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */; };
+		10F2BCEE1A5BA05800A0D26C /* MTRComputation.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCED1A5BA05800A0D26C /* MTRComputation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +41,13 @@
 		10F2BCDD1A5B9F2300A0D26C /* MTRMainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MTRMainStoryboard.storyboard; sourceTree = "<group>"; };
 		10F2BCDE1A5B9F2300A0D26C /* MTRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRViewController.h; sourceTree = "<group>"; };
 		10F2BCDF1A5B9F2300A0D26C /* MTRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRViewController.m; sourceTree = "<group>"; };
+		10F2BCE61A5BA03F00A0D26C /* MTRReactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactor.h; sourceTree = "<group>"; };
+		10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRReactor.m; sourceTree = "<group>"; };
+		10F2BCE91A5BA04F00A0D26C /* MTRDependency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRDependency.h; sourceTree = "<group>"; };
+		10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRDependency.m; sourceTree = "<group>"; };
+		10F2BCEC1A5BA05800A0D26C /* MTRComputation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRComputation.h; sourceTree = "<group>"; };
+		10F2BCED1A5BA05800A0D26C /* MTRComputation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRComputation.m; sourceTree = "<group>"; };
+		10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactor_Private.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +90,13 @@
 		10F2BCB01A5B9EA900A0D26C /* Reactor */ = {
 			isa = PBXGroup;
 			children = (
+				10F2BCE61A5BA03F00A0D26C /* MTRReactor.h */,
+				10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */,
+				10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */,
+				10F2BCE91A5BA04F00A0D26C /* MTRDependency.h */,
+				10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */,
+				10F2BCEC1A5BA05800A0D26C /* MTRComputation.h */,
+				10F2BCED1A5BA05800A0D26C /* MTRComputation.m */,
 			);
 			path = Reactor;
 			sourceTree = "<group>";
@@ -216,8 +233,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				10F2BCE31A5B9F2300A0D26C /* MTRAppDelegate.m in Sources */,
+				10F2BCEE1A5BA05800A0D26C /* MTRComputation.m in Sources */,
 				10F2BCE21A5B9F2300A0D26C /* main.m in Sources */,
+				10F2BCE81A5BA03F00A0D26C /* MTRReactor.m in Sources */,
 				10F2BCE51A5B9F2300A0D26C /* MTRViewController.m in Sources */,
+				10F2BCEB1A5BA04F00A0D26C /* MTRDependency.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
