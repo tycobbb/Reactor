@@ -1,17 +1,14 @@
 //
-//  AppDelegate.h
+//  MTRAppDelegate.h
 //  Reactor
 //
 //  Created by Ty Cobb on 1/5/15.
 //  Copyright (c) 2015 cobb. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
+@interface MTRAppDelegate : UIResponder <UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
-
-
 @end
 

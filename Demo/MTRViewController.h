@@ -1,14 +1,14 @@
 //
-//  ViewController.h
+//  MTRViewController.h
 //  Reactor
 //
 //  Created by Ty Cobb on 1/5/15.
 //  Copyright (c) 2015 cobb. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
-@interface ViewController : UIViewController
+@interface MTRViewController : UIViewController
 
 
 @end
