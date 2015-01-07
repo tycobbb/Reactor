@@ -8,19 +8,17 @@
 
 @import Foundation;
 
-/**
- @brief A computation encapsulates a runnable block of code
- 
- Computations should only be created through @c -autorun: on @c MTRReactor. Computations
- run as long as it has dependencies that change or until the use calls stop manually.
-*/
+@protocol MTRComputationDelegate;
 
 @interface MTRComputation : NSObject
 
-/** @c A unique identifier for this computation */
+/** Responsible for responding to scheduling and configuration events */
+@property (weak, nonatomic) id<MTRComputationDelegate> delegate;
+
+/** A unique identifier for this computation */
 @property (nonatomic, readonly) id identifier;
 
-/** @c The enclosing computation, if this was triggered inside another computation */
+/** The enclosing computation, if this was triggered inside another computation */
 @property (nonatomic, readonly) MTRComputation *parent;
 
 /** @c YES if the computation has been stopped. */
@@ -42,6 +40,35 @@
  @param parent     The enclosing computation
 */
 
-- (instancetype)initWithId:(id)identifier block:(void(^)(void))block parent:(MTRComputation *)parent;
+- (instancetype)initWithId:(id)identifier block:(void(^)(MTRComputation *))block parent:(MTRComputation *)parent;
+
+/**
+ @brief Stops the computaiton, preventing it from re-running
+ 
+ Stop also invalidates (but does not run) the computation, which cleans up any existing relationshpis 
+ to dependencies.
+*/
+
+- (void)stop;
+
+/**
+ @brief Marks a computation to be re-run
+ 
+ If the computation is already invalid, this does nothing. Any @c -onInvalidate: handlers are invoked
+ before this method completes.
+*/
+
+- (void)invalidate;
+
+/**
+ @brief Registers a handler to run when the computation is invalidated
+ 
+ If the computation is already invalid, the handler fires immediately. Handlers are discarded after
+ they're invoke, so @c -onInvalidate: should be called again if repeat callbacks are necessary.
+ 
+ @param handler The handler to invoke on invalidation. Receives the computation as a parameter.
+*/
+
+- (void)onInvalidate:(void(^)(MTRComputation *))handler;
 
 @end
