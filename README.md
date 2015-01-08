@@ -17,8 +17,7 @@ for(int i=0 ; i<100 ; i++) {
 }
 ```
 
-Seems like there's a wizard behind the curtain, right? There is, so let's get a good look at his underthings. Under the hood 
-there are some connections being made on the sly between the two building blocks of Reactor, `MTRComputation` and `MTRDependency`.
+Seems like there's a wizard behind the curtain, right? There is, so let's get a good look at his underthings. Reactor has two core building blocks, `MTRComputation` and `MTRDependency`, which are linked up on the sly to provide the reactivity.
 
 ### Computations
 An `MTRComputation` is created every time you call `-autorun:`&mdash;it is an object that encapsulates the block you pass to
