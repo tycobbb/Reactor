@@ -70,6 +70,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1021A5551A5E29B900CEE5EC /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				FB3225731A5DF0B2005015BE /* Reactor.h */,
+				10F2BCE61A5BA03F00A0D26C /* MTRReactor.h */,
+				10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */,
+				10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */,
+				10F2BCE91A5BA04F00A0D26C /* MTRDependency.h */,
+				10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */,
+				10F2BCEC1A5BA05800A0D26C /* MTRComputation.h */,
+				10F2BCED1A5BA05800A0D26C /* MTRComputation.m */,
+				FB3225721A5DEA0B005015BE /* MTRComputation_Private.h */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
 		10F2BCA51A5B9EA900A0D26C = {
 			isa = PBXGroup;
 			children = (
@@ -92,15 +108,7 @@
 		10F2BCB01A5B9EA900A0D26C /* Reactor */ = {
 			isa = PBXGroup;
 			children = (
-				FB3225731A5DF0B2005015BE /* Reactor.h */,
-				10F2BCE61A5BA03F00A0D26C /* MTRReactor.h */,
-				10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */,
-				10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */,
-				10F2BCE91A5BA04F00A0D26C /* MTRDependency.h */,
-				10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */,
-				10F2BCEC1A5BA05800A0D26C /* MTRComputation.h */,
-				10F2BCED1A5BA05800A0D26C /* MTRComputation.m */,
-				FB3225721A5DEA0B005015BE /* MTRComputation_Private.h */,
+				1021A5551A5E29B900CEE5EC /* Core */,
 			);
 			path = Reactor;
 			sourceTree = "<group>";
