@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1021A55C1A5E2A8C00CEE5EC /* MTRReactor+Operators.m in Sources */ = {isa = PBXBuildFile; fileRef = 1021A55B1A5E2A8C00CEE5EC /* MTRReactor+Operators.m */; };
+		1021A55F1A5E2B8600CEE5EC /* MTRThrottle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1021A55E1A5E2B8600CEE5EC /* MTRThrottle.m */; };
 		10F2BCCE1A5B9EA900A0D26C /* ReactorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCCD1A5B9EA900A0D26C /* ReactorTests.m */; };
 		10F2BCE11A5B9F2300A0D26C /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 10F2BCD91A5B9F2300A0D26C /* LaunchScreen.xib */; };
 		10F2BCE21A5B9F2300A0D26C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCDA1A5B9F2300A0D26C /* main.m */; };
@@ -29,6 +31,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1021A55A1A5E2A8C00CEE5EC /* MTRReactor+Operators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MTRReactor+Operators.h"; sourceTree = "<group>"; };
+		1021A55B1A5E2A8C00CEE5EC /* MTRReactor+Operators.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MTRReactor+Operators.m"; sourceTree = "<group>"; };
+		1021A55D1A5E2B8600CEE5EC /* MTRThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRThrottle.h; sourceTree = "<group>"; };
+		1021A55E1A5E2B8600CEE5EC /* MTRThrottle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRThrottle.m; sourceTree = "<group>"; };
 		10F2BCAE1A5B9EA900A0D26C /* Reactor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reactor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10F2BCC71A5B9EA900A0D26C /* ReactorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		10F2BCCC1A5B9EA900A0D26C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -86,6 +92,17 @@
 			path = Core;
 			sourceTree = "<group>";
 		};
+		1021A5561A5E29E700CEE5EC /* Operators */ = {
+			isa = PBXGroup;
+			children = (
+				1021A55A1A5E2A8C00CEE5EC /* MTRReactor+Operators.h */,
+				1021A55B1A5E2A8C00CEE5EC /* MTRReactor+Operators.m */,
+				1021A55D1A5E2B8600CEE5EC /* MTRThrottle.h */,
+				1021A55E1A5E2B8600CEE5EC /* MTRThrottle.m */,
+			);
+			path = Operators;
+			sourceTree = "<group>";
+		};
 		10F2BCA51A5B9EA900A0D26C = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				1021A5551A5E29B900CEE5EC /* Core */,
+				1021A5561A5E29E700CEE5EC /* Operators */,
 			);
 			path = Reactor;
 			sourceTree = "<group>";
@@ -245,7 +263,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				10F2BCE31A5B9F2300A0D26C /* MTRAppDelegate.m in Sources */,
+				1021A55F1A5E2B8600CEE5EC /* MTRThrottle.m in Sources */,
 				10F2BCEE1A5BA05800A0D26C /* MTRComputation.m in Sources */,
+				1021A55C1A5E2A8C00CEE5EC /* MTRReactor+Operators.m in Sources */,
 				10F2BCE21A5B9F2300A0D26C /* main.m in Sources */,
 				10F2BCE81A5BA03F00A0D26C /* MTRReactor.m in Sources */,
 				10F2BCE51A5B9F2300A0D26C /* MTRViewController.m in Sources */,
