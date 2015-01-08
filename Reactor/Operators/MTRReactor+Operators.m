@@ -7,16 +7,17 @@
 //
 
 #import "MTRReactor+Operators.h"
+#import "MTRThrottle.h"
 
 @implementation MTRReactor (Operators)
 
 - (MTRComputation *)throttle:(NSTimeInterval)timeout block:(void (^)(MTRComputation *))block
 {
     NSParameterAssert(block);
-    
-    return [self.class autorun:^(MTRComputation *computation) {
-        
-    }];
+    // create a throttle to manage the timeout
+    MTRThrottle *throttle = [[MTRThrottle alloc] initWithTimeout:timeout block:block];
+    // the throttle creates the computation internally
+    return throttle.computation;
 }
 
 @end

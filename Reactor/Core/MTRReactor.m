@@ -52,7 +52,8 @@
     // create a new computation
     MTRComputation *computation =
         [[MTRComputation alloc] initWithId:identifier block:block parent:self.currentComputation];
-    
+   
+    // this ensures that inner computations are cleaned up when the parent invalidates
     if(self.isActive) {
         [self onInvalidate:^(MTRComputation *computation) {
             [computation stop];

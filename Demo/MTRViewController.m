@@ -9,6 +9,7 @@
 #import "MTRViewController.h"
 #import "MTRReactor.h"
 #import "MTRDependency.h"
+#import "MTRReactor+Operators.h"
 
 @interface MTRViewController () <UITextFieldDelegate>
 @property (copy  , nonatomic) NSString *thoughts;
@@ -34,8 +35,17 @@
     [super viewDidLoad];
   
     [MTRReactor autorun:^(MTRComputation *computation) {
+        self.responseLabel.text = [self evaluateThoughts:self.thoughts];
+    }];
+    
+    [[MTRReactor reactor] throttle:0.5f block:^(MTRComputation *computation) {
         self.responseLabel.text = [self respondToThoughts:self.thoughts];
     }];
+}
+
+- (NSString *)evaluateThoughts:(NSString *)thoughts
+{
+    return @"Hmm...";
 }
 
 - (NSString *)respondToThoughts:(NSString *)thoughts

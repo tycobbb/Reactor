@@ -9,19 +9,6 @@
 #import "MTRComputation_Private.h"
 #import "MTRReactor_Private.h"
 
-@interface MTRComputation ()
-/** A list of handlers to call after the computation has invalidated */
-@property (strong, nonatomic) NSMutableArray *invalidateHandlers;
-/** The computation's runnable code */
-@property (copy, nonatomic) void(^block)(MTRComputation *);
-// read-write version of public property
-@property (assign, nonatomic) BOOL isStopped;
-// read-write version of public property
-@property (assign, nonatomic) BOOL isInvalid;
-/** True while the computation is being re-run */
-@property (assign, nonatomic) BOOL isRecomputing;
-@end
-
 @implementation MTRComputation
 
 - (instancetype)initWithId:(id)identifier block:(void (^)(MTRComputation *))block parent:(MTRComputation *)parent

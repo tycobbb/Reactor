@@ -8,10 +8,15 @@
 
 @import Foundation;
 
+#import "MTRComputation.h"
+
 @interface MTRThrottle : NSObject
 
 /** The interval to throttle updates for */
 @property (nonatomic, readonly) NSTimeInterval timeout;
+
+/** The computation backing this throttle */
+@property (nonatomic, readonly) MTRComputation *computation;
 
 /**
  @brief Initializes a new throttle
@@ -23,6 +28,6 @@
  @return A new MTRThrottle instance
 */
 
-- (instancetype)initWithTimeout:(NSTimeInterval)timeout;
+- (instancetype)initWithTimeout:(NSTimeInterval)timeout block:(void(^)(MTRComputation *))block;
 
 @end

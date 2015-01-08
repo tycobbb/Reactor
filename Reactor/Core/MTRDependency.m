@@ -8,6 +8,7 @@
 
 #import "MTRDependency.h"
 #import "MTRReactor_Private.h"
+#import "MTRComputation_Private.h"
 
 @interface MTRDependency ()
 /** A map computations keyed by ID currently depending on this dependency */
@@ -44,7 +45,11 @@
     if(!self.dependentsMap[computation.identifier]) {
         self.dependentsMap[computation.identifier] = computation;
         [computation onInvalidate:^(MTRComputation *computation) {
-            [self.dependentsMap removeObjectForKey:computation.identifier];
+            // normally, dependencies are discarded. some operators (like -throttle:) need to
+            // modify this behavior to get consistent callbacks
+            if(!computation.keepsDependenciesOnInvalidation) {
+                [self.dependentsMap removeObjectForKey:computation.identifier];
+            }
         }];
         
         return YES;
