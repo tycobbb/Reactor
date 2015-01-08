@@ -33,7 +33,7 @@
 {
     [super viewDidLoad];
   
-    [MTRReactor start:^(MTRComputation *computation) {
+    [MTRReactor autorun:^(MTRComputation *computation) {
         self.responseLabel.text = [self respondToThoughts:self.thoughts];
     }];
 }

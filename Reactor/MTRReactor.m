@@ -35,9 +35,9 @@
 
 # pragma mark - Execution
 
-+ (MTRComputation *)start:(void (^)(MTRComputation *))block
++ (MTRComputation *)autorun:(void (^)(MTRComputation *))block
 {
-    return [[self reactor] start:block];
+    return [[self reactor] autorun:block];
 }
 
 + (void)nonreactive:(void (^)(void))block
@@ -45,7 +45,7 @@
     [[self reactor] nonreactive:block];
 }
 
-- (MTRComputation *)start:(void (^)(MTRComputation *))block
+- (MTRComputation *)autorun:(void (^)(MTRComputation *))block
 {
     id identifier = @(self.nextId++);
     

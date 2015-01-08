@@ -40,7 +40,7 @@
  @return The newly created computation
 */
 
-+ (MTRComputation *)start:(void(^)(MTRComputation *))block;
++ (MTRComputation *)autorun:(void(^)(MTRComputation *))block;
 
 /**
  @brief Executes a block that won't trigger any dependencies
