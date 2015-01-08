@@ -49,6 +49,7 @@
 		10F2BCED1A5BA05800A0D26C /* MTRComputation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRComputation.m; sourceTree = "<group>"; };
 		10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactor_Private.h; sourceTree = "<group>"; };
 		FB3225721A5DEA0B005015BE /* MTRComputation_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRComputation_Private.h; sourceTree = "<group>"; };
+		FB3225731A5DF0B2005015BE /* Reactor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +92,7 @@
 		10F2BCB01A5B9EA900A0D26C /* Reactor */ = {
 			isa = PBXGroup;
 			children = (
+				FB3225731A5DF0B2005015BE /* Reactor.h */,
 				10F2BCE61A5BA03F00A0D26C /* MTRReactor.h */,
 				10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */,
 				10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */,

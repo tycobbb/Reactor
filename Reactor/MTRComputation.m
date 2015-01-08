@@ -35,9 +35,19 @@
         _parent = parent;
         _isFirstRun = YES;
         _invalidateHandlers = [NSMutableArray new];
+       
+        // execute the computations initial run 
+        [self compute];
+        
+        _isFirstRun = NO;
     }
     
     return self;
+}
+
+- (void)dealloc
+{
+    
 }
 
 # pragma mark - Execution
@@ -77,7 +87,7 @@
 
 - (void)invalidate
 {
-    if(!self.isInvalid) {
+    if(self.isInvalid) {
         return;
     }
     

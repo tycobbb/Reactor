@@ -16,6 +16,15 @@
 
 @implementation MTRDependency
 
+- (instancetype)init
+{
+    if(self = [super init]) {
+        _dependentsMap = [NSMutableDictionary new];
+    }
+    
+    return self;
+}
+
 # pragma mark - Dependent Assoscation
 
 - (BOOL)depend

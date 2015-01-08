@@ -19,7 +19,7 @@
 @property (nonatomic, readonly) id identifier;
 
 /** The enclosing computation, if this was triggered inside another computation */
-@property (nonatomic, readonly) MTRComputation *parent;
+@property (weak, nonatomic, readonly) MTRComputation *parent;
 
 /** @c YES if the computation has been stopped. */
 @property (nonatomic, readonly) BOOL isStopped;
