@@ -36,16 +36,21 @@
     
     MTRReactiveModel *model = [MTRReactiveModel new];
     model.name = @"asdf";
-    model.doh = 12;
+    model.num = 12;
+    model.point = (CGPoint){ .x = 0.5f };
+    model.rect = (CGRect){ 5.0f, 0.0f, 100.0f, 0.0f };
+    model.block = ^{
+        NSLog(@"yay");
+    };
   
     [MTRReactor autorun:^(MTRComputation *computation) {
-        NSLog(@"%@ %d", model.name, model.doh);
+        NSLog(@"%@ %d %@ %@", model.name, model.num, NSStringFromCGPoint(model.point), NSStringFromCGRect(model.rect));
+        model.block();
         self.responseLabel.text = [self respondToThoughts:self.thoughts];
     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         model.name = @"yoooo";
-        model.doh = 15;
     });
 }
 
