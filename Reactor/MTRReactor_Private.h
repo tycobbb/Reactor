@@ -7,6 +7,7 @@
 //
 
 #import "MTRReactor.h"
+#import "MTRReactiveEngine.h"
 
 @interface MTRReactor ()
 @property (strong, nonatomic) MTRComputation *currentComputation;

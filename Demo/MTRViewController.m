@@ -9,6 +9,7 @@
 #import "MTRViewController.h"
 #import "MTRReactor.h"
 #import "MTRDependency.h"
+#import "MTRReactiveModel.h"
 
 @interface MTRViewController () <UITextFieldDelegate>
 @property (copy  , nonatomic) NSString *thoughts;
@@ -32,10 +33,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    MTRReactiveModel *model = [MTRReactiveModel new];
+    model.name = @"asdf";
+    model.doh = 12;
   
     [MTRReactor autorun:^(MTRComputation *computation) {
+        NSLog(@"%@ %d", model.name, model.doh);
         self.responseLabel.text = [self respondToThoughts:self.thoughts];
     }];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        model.name = @"yoooo";
+        model.doh = 15;
+    });
 }
 
 - (NSString *)respondToThoughts:(NSString *)thoughts
