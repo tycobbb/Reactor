@@ -101,31 +101,28 @@ char *mtr_dependenciesKey;
 /**
  @brief Looks up a dependency on a reactive object
  
- Lazy-loads both the dependency map and the dependencies themselves. If called outside
- a reactive context, returns nil.
+ If @c lazy is true, created the dependency map and dependencies on demand, otherwise
+ will return only dependencies that already exist.
  
  @param other The object to look up the dependency on
  @param name  The name corresponding to this dependency
+ @param lazy  @c YES if dependencies should be lazy-loaded
  
  @return The dependecny for this name or nil
 */
 
-NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name)
+NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL lazy)
 {
-    if(!MTRReactor.reactor.isActive) {
-        return nil;
-    }
-    
     // lazy-load the dependencies dictionary
     NSMutableDictionary *dependencies = objc_getAssociatedObject(other, mtr_dependenciesKey);
-    if(!dependencies) {
+    if(lazy && !dependencies) {
         dependencies = [NSMutableDictionary new];
         objc_setAssociatedObject(other, mtr_dependenciesKey, dependencies, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     
     // lazy load the dependency for this property name
     MTRDependency *dependency = dependencies[name];
-    if(!dependency) {
+    if(lazy && !dependency) {
         dependency = [MTRDependency new];
         dependencies[name] = dependency;
     }
@@ -150,12 +147,13 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name)
 
 NS_INLINE void mtr_depend(id other, NSString *name)
 {
-    MTRDependency *dependency = mtr_dependencyForName(other, name);
-    [dependency depend];
+    if(MTRReactor.reactor.isActive) {
+        [mtr_dependencyForName(other, name, YES) depend];
+    }
 }
 
 /** 
- @brief Swizzles the getter according to its return type 
+ @brief Swizzles the getter according to its return type
  If there is no getter to swizzle, then this method does nothing.
  @return @c NO if the return type was unsupported
 */
@@ -220,6 +218,14 @@ NS_INLINE void mtr_depend(id other, NSString *name)
     return YES;
 }
 
+/**
+ @brief The meat and potatotes of setter swizzling, the rest is type checking
+ 
+ Replaces the existing instance with one that calls @c mtr_changed first, passing
+ the callee and the name of the invalidated property. That function, in turn, triggers 
+ the assosciated dependency.
+*/
+
 #define MTRSwizzleSetter(_type) \
     void (*existing)(id self, SEL _cmd, _type value) = (void *)method_getImplementation(setter); \
     method_setImplementation(setter, imp_implementationWithBlock(^(id other, _type value) { \
@@ -229,8 +235,7 @@ NS_INLINE void mtr_depend(id other, NSString *name)
 
 NS_INLINE void mtr_changed(id other, NSString *name)
 {
-    MTRDependency *dependency = mtr_dependencyForName(other, name);
-    [dependency changed];
+    [mtr_dependencyForName(other, name, NO) changed];
 }
 
 + (BOOL)class:(Class)klass swizzleSetter:(SEL)name forProperty:(NSString *)property
@@ -242,7 +247,7 @@ NS_INLINE void mtr_changed(id other, NSString *name)
     
     // we need to check the return type to ensure we can support any value
     char type[8];
-    method_getArgumentType(setter, 3, type, 8);
+    method_getArgumentType(setter, 2, type, 8);
     
     // check every return type so that we can swizzle the right signature
     // this logic is borrowed heavily from Expecta, thx!

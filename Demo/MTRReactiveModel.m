@@ -10,10 +10,4 @@
 
 @implementation MTRReactiveModel
 
-- (NSString *)name
-{
-    NSLog(@"%@", _name);
-    return _name;
-}
-
 @end
