@@ -8,6 +8,14 @@
 
 @import Foundation;
 
+/**
+ @brief Addeds transparent reactivity to a class
+ 
+ Any properties on classes annotated with this protocol are made reactive. Each class
+ that wishes to make its properties reactive must adopt the protocol independently, even
+ if its superclass adopts the protocol.
+*/
+
 @protocol MTRReactive <NSObject> @optional
 
 /**
@@ -15,6 +23,8 @@
 
  Any properties whose keys are not returned are assosciated with an implicit dependency
  when accessed inside a computation.
+ 
+ You should not call super from this method.
  
  @attention Mutually exclusive with @c +reactive:
 
@@ -29,6 +39,8 @@
  
  Any properties whose keys are returned are assosciated with an implicit dependency
  when accessed inside a computation.
+ 
+ You should not call super from this method.
  
  @attention Mutually exclusive with @c +nonreactive:
  
