@@ -1,5 +1,5 @@
 # Reactor
-Reactor provides mechanisms for writing reactive code with transparently-defined dependencies. It's based on the Tracker
+Reactor provides mechanisms for writing transparently reactive code. It's based on the Tracker
 library from [Meteor.js](https://www.meteor.com/), which you can view the source for [here](https://github.com/meteor/meteor/blob/devel/packages/tracker/tracker.js).
 
 ## How does it work?
@@ -56,9 +56,27 @@ When `-changed` is called on a dependency, and of its dependent computation will
 the dependency relationships, and kicks-off the cycle all over again. It's not that magical, eh? You've got legs and a torso,
 you're just as capable as any wizard.
 
+## Declarative Reactivity
 
+Creating all those dependencies is pretty tedious. Worse, if you override the setter and getter for a property to trigger a dependency its storage isn't `@synthesized` anymore and you have to do it manually.
 
+Enter `MTRReactive`. Annotate any of your classes with this protocol, and all its properties become implicitly reactive:
+```Objective-C
+@interface Person : NSObject <MTRReactive>
+@property (copy  , nonatomic) NSString *name;
+@property (assign, nonatomic) NSInteger age;
+@end
+```
 
+If you want to whitelist/blacklist certain properties, you can implement *either* `+reactiveProperties:` *or* `+nonreactiveProperties:`, respectively.
 
+There are a few caveats to keep in mind:
+- Just because your superclass adopts `MTRReactive` doesn't mean your properties are also reactive. Every class that wants reactivity must adopt the protocol independently.
+- Properties which don't have a setter won't be reactive, as there's no way to invalidate its dependency.
 
-
+You can then react to your objects' properties in computations like normal:
+```Objective-C
+[MTRReactor autorun:^(MTRComputation *computation) {
+    self.ageLabel = @(person.age).description;
+}];
+```

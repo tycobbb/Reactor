@@ -18,28 +18,28 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T6x-Kd-bny" userLabel="Container">
-                                <rect key="frame" x="20" y="40" width="600" height="540"/>
+                                <rect key="frame" x="20" y="40" width="560" height="540"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SQV-nh-rMu">
-                                        <rect key="frame" x="0.0" y="0.0" width="24" height="20"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You, Lawyer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SQV-nh-rMu">
+                                        <rect key="frame" x="0.0" y="0.0" width="76" height="20"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The Computer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UAR-HS-Yb4">
-                                        <rect key="frame" x="0.0" y="73" width="93" height="20"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Client" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UAR-HS-Yb4">
+                                        <rect key="frame" x="0.0" y="73" width="71" height="20"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hmm..." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ou1-c4-g9V">
-                                        <rect key="frame" x="0.0" y="101" width="600" height="25"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hmm..." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ou1-c4-g9V">
+                                        <rect key="frame" x="0.0" y="101" width="560" height="25"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="18"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="What's on your mind?" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="G7y-qB-PAa">
-                                        <rect key="frame" x="0.0" y="28" width="600" height="25"/>
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Here's some advice..." minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="G7y-qB-PAa">
+                                        <rect key="frame" x="0.0" y="28" width="560" height="25"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="18"/>
                                         <textInputTraits key="textInputTraits"/>
                                         <connections>
@@ -67,10 +67,11 @@
                             <constraint firstItem="T6x-Kd-bny" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="20" id="IS6-yR-xoG"/>
                             <constraint firstItem="T6x-Kd-bny" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" id="mlM-ZG-YEi"/>
                             <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="T6x-Kd-bny" secondAttribute="bottom" constant="20" id="u3u-K2-X0K"/>
-                            <constraint firstItem="T6x-Kd-bny" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailing" constant="20" id="wUK-PI-2xA"/>
+                            <constraint firstAttribute="trailing" secondItem="T6x-Kd-bny" secondAttribute="trailing" constant="20" id="wUK-PI-2xA"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="adviceField" destination="G7y-qB-PAa" id="o3N-Wi-jAR"/>
                         <outlet property="responseLabel" destination="ou1-c4-g9V" id="SW0-my-kNa"/>
                     </connections>
                 </viewController>

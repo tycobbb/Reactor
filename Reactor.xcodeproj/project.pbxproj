@@ -16,6 +16,8 @@
 		10F2BCE81A5BA03F00A0D26C /* MTRReactor.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCE71A5BA03F00A0D26C /* MTRReactor.m */; };
 		10F2BCEB1A5BA04F00A0D26C /* MTRDependency.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCEA1A5BA04F00A0D26C /* MTRDependency.m */; };
 		10F2BCEE1A5BA05800A0D26C /* MTRComputation.m in Sources */ = {isa = PBXBuildFile; fileRef = 10F2BCED1A5BA05800A0D26C /* MTRComputation.m */; };
+		FBBB434C1A682B4600D500D8 /* MTRReactiveEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = FBBB434B1A682B4600D500D8 /* MTRReactiveEngine.m */; };
+		FBBB434F1A68310A00D500D8 /* MTRPerson.m in Sources */ = {isa = PBXBuildFile; fileRef = FBBB434E1A68310A00D500D8 /* MTRPerson.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +52,11 @@
 		10F2BCEF1A5BA07500A0D26C /* MTRReactor_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactor_Private.h; sourceTree = "<group>"; };
 		FB3225721A5DEA0B005015BE /* MTRComputation_Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRComputation_Private.h; sourceTree = "<group>"; };
 		FB3225731A5DF0B2005015BE /* Reactor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
+		FBBB43491A682A6500D500D8 /* MTRReactive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactive.h; sourceTree = "<group>"; };
+		FBBB434A1A682B4600D500D8 /* MTRReactiveEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRReactiveEngine.h; sourceTree = "<group>"; };
+		FBBB434B1A682B4600D500D8 /* MTRReactiveEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRReactiveEngine.m; sourceTree = "<group>"; };
+		FBBB434D1A68310A00D500D8 /* MTRPerson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTRPerson.h; sourceTree = "<group>"; };
+		FBBB434E1A68310A00D500D8 /* MTRPerson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTRPerson.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +108,9 @@
 				10F2BCEC1A5BA05800A0D26C /* MTRComputation.h */,
 				10F2BCED1A5BA05800A0D26C /* MTRComputation.m */,
 				FB3225721A5DEA0B005015BE /* MTRComputation_Private.h */,
+				FBBB43491A682A6500D500D8 /* MTRReactive.h */,
+				FBBB434A1A682B4600D500D8 /* MTRReactiveEngine.h */,
+				FBBB434B1A682B4600D500D8 /* MTRReactiveEngine.m */,
 			);
 			path = Reactor;
 			sourceTree = "<group>";
@@ -129,6 +139,8 @@
 				10F2BCDC1A5B9F2300A0D26C /* MTRAppDelegate.m */,
 				10F2BCDE1A5B9F2300A0D26C /* MTRViewController.h */,
 				10F2BCDF1A5B9F2300A0D26C /* MTRViewController.m */,
+				FBBB434D1A68310A00D500D8 /* MTRPerson.h */,
+				FBBB434E1A68310A00D500D8 /* MTRPerson.m */,
 				10F2BCDD1A5B9F2300A0D26C /* MTRMainStoryboard.storyboard */,
 				10F2BCD91A5B9F2300A0D26C /* LaunchScreen.xib */,
 				10F2BCDA1A5B9F2300A0D26C /* main.m */,
@@ -240,7 +252,9 @@
 				10F2BCEE1A5BA05800A0D26C /* MTRComputation.m in Sources */,
 				10F2BCE21A5B9F2300A0D26C /* main.m in Sources */,
 				10F2BCE81A5BA03F00A0D26C /* MTRReactor.m in Sources */,
+				FBBB434F1A68310A00D500D8 /* MTRPerson.m in Sources */,
 				10F2BCE51A5B9F2300A0D26C /* MTRViewController.m in Sources */,
+				FBBB434C1A682B4600D500D8 /* MTRReactiveEngine.m in Sources */,
 				10F2BCEB1A5BA04F00A0D26C /* MTRDependency.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
