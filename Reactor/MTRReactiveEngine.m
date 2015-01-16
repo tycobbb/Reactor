@@ -31,6 +31,10 @@
     free(classes);
 }
 
+/*
+ Add reactivity to any appropriate properties on the class
+*/
+
 + (void)reactify:(Class<MTRReactive>)klass
 {
     NSArray *whitelist = mtr_invokeKeygenMethod(klass, @selector(reactiveProperties:));
@@ -50,7 +54,7 @@
         objc_property_t property = properties[index];
         const char *name = property_getName(property);
         
-        // ensure that the white/blacklist accepts permits this property
+        // ensure that the white/blacklist permits this property
         NSString *objcName = @(name);
         if((blacklist && [blacklist containsObject:objcName]) || (whitelist && ![whitelist containsObject:objcName])) {
             continue;
@@ -67,21 +71,14 @@
             getterName = mtr_getterNameFromProperty(name);
         }
         
-        // get the custom setter name or a
+        // get the custom setter name or assume the default
         setterName = property_copyAttributeValue(property, "S");
         if(setterName == NULL) {
             setterName = mtr_setterNameFromProperty(name);
         }
       
-        BOOL error;
-        error = [self class:klass swizzleGetter:sel_registerName(getterName) forProperty:objcName];
-        error = [self class:klass swizzleSetter:sel_registerName(setterName) forProperty:objcName];
-        
-        if(!error) {
-            printf("%s: %s - MTRReactive doesn't support properties of this type\n", class_getName(klass), name);
-            printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
-            printf("\tb. Submit a pull request\n");
-        }
+        // swizzle the methods for this property
+        [self class:klass swizzleGetter:sel_registerName(getterName) setter:sel_registerName(setterName) forProperty:objcName];
         
         free(_getterName);
         free(setterName);
@@ -90,6 +87,10 @@
     free(properties);
 }
 
+/*
+ Call the black/whitelist method that is unique to this class (not its superclass imp) if such
+ a method exists.
+*/
 
 NSArray * mtr_invokeKeygenMethod(Class<MTRReactive> klass, SEL name)
 {
@@ -131,24 +132,69 @@ NS_INLINE char * mtr_setterNameFromProperty(const char *name)
 
 # pragma mark - Swizzling
 
-const char *mtr_dependenciesKey;
-const size_t mtr_typeLength = 64;
+/*
+ Swizzles the getter by replacing its current implementation with one that first calls
+ mtr_depend to invoke the dependency assosciated with this property.
+*/
 
-/**
- @brief Looks up a dependency on a reactive object
+#define MTRSwizzleGetter(_type) \
+    _type (*existing)(id self, SEL _cmd) = (void *)method_getImplementation(getter); \
+    method_setImplementation(getter, imp_implementationWithBlock(^_type(id other) { \
+        mtr_depend(other, property); \
+        return existing(other, getterName); \
+    }));
+
+/*
+ Swizzles the setter by replacing its current implementation with one that calls mtr_changed
+ afterwards to update the dependency assosciated with this property
+*/
+
+#define MTRSwizzleSetter(_type) \
+    void (*existing)(id self, SEL _cmd, _type value) = (void *)method_getImplementation(setter); \
+    method_setImplementation(setter, imp_implementationWithBlock(^(id other, _type value) { \
+        existing(other, setterName, value); \
+        mtr_changed(other, property); \
+    }));
+
+/*
+ Calls the above macros to swizzle the property's methods, provided they exist
+*/
+
+#define MTRSwizzleProperty(_type) \
+    if(getter != NULL) { MTRSwizzleGetter(_type) } \
+    if(setter != NULL) { MTRSwizzleSetter(_type) }
+
+/* 
+ Invokes the dependency for this property if inside a computation
+*/
+
+NS_INLINE void mtr_depend(id other, NSString *name)
+{
+    if(MTRReactor.reactor.isActive) {
+        [mtr_dependencyForName(other, name, YES) depend];
+    }
+}
+
+/*
+ Updates the dependency for this property if necessary
+*/
+
+NS_INLINE void mtr_changed(id other, NSString *name)
+{
+    [mtr_dependencyForName(other, name, NO) changed];
+}
+
+/*
+ Looks up the dependency on `other` for this property
  
- If @c lazy is true, created the dependency map and dependencies on demand, otherwise
- will return only dependencies that already exist.
- 
- @param other The object to look up the dependency on
- @param name  The name corresponding to this dependency
- @param lazy  @c YES if dependencies should be lazy-loaded
- 
- @return The dependecny for this name or nil
+ If `lazy` is `YES`, then the dependency (and the dependency collection) are created if they don't
+ already exist. Otherwise, this method only returns pre-existing dependencies.
 */
 
 NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL lazy)
 {
+    static const char *mtr_dependenciesKey;
+    
     // lazy-load the dependencies dictionary
     NSMutableDictionary *dependencies = objc_getAssociatedObject(other, mtr_dependenciesKey);
     if(lazy && !dependencies) {
@@ -166,172 +212,80 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
     return dependency;
 }
 
-/**
- @brief The meat and potatotes of getter swizzling, the rest is type checking
-
- Replaces the existing instance with one that calls @c mtr_depend first, passing
- the callee and the name of the property to depend on. That function, in turn, 
- triggers the assosciated dependency.
-*/
-
-#define MTRSwizzleGetter(_type) \
-    _type (*existing)(id self, SEL _cmd) = (void *)method_getImplementation(getter); \
-    method_setImplementation(getter, imp_implementationWithBlock(^_type(id other) { \
-        mtr_depend(other, property); \
-        return existing(other, name); \
-    }));
-
-NS_INLINE void mtr_depend(id other, NSString *name)
-{
-    if(MTRReactor.reactor.isActive) {
-        [mtr_dependencyForName(other, name, YES) depend];
-    }
-}
-
-/** 
- @brief Swizzles the getter according to its return type
- If there is no getter to swizzle, then this method does nothing.
- @return @c NO if the return type was unsupported
-*/
-
-+ (BOOL)class:(Class)klass swizzleGetter:(SEL)name forProperty:(NSString *)property
-{
-    Method getter = class_getInstanceMethod(klass, name);
-    if(getter == NULL) {
-        return YES;
-    }
-    
-    // we need to check the return type to ensure we can support any value
-    char type[mtr_typeLength];
-    method_getReturnType(getter, type, mtr_typeLength);
-   
-    // check every return type so that we can swizzle the right signature
-    // this logic is borrowed heavily from Expecta, thx!
-    if(strcmp(type, @encode(char)) == 0) {
-        MTRSwizzleGetter(char);
-    } else if(strcmp(type, @encode(_Bool)) == 0) {
-        MTRSwizzleGetter(_Bool);
-    } else if(strcmp(type, @encode(double)) == 0) {
-        MTRSwizzleGetter(float);
-    } else if(strcmp(type, @encode(float)) == 0) {
-        MTRSwizzleGetter(float);
-    } else if(strcmp(type, @encode(int)) == 0) {
-        MTRSwizzleGetter(int);
-    } else if(strcmp(type, @encode(long)) == 0) {
-        MTRSwizzleGetter(long);
-    } else if(strcmp(type, @encode(long long)) == 0) {
-        MTRSwizzleGetter(long long);
-    } else if(strcmp(type, @encode(short)) == 0) {
-        MTRSwizzleGetter(short);
-    } else if(strcmp(type, @encode(unsigned char)) == 0) {
-        MTRSwizzleGetter(unsigned char);
-    } else if(strcmp(type, @encode(unsigned int)) == 0) {
-        MTRSwizzleGetter(unsigned int);
-    } else if(strcmp(type, @encode(unsigned long)) == 0) {
-        MTRSwizzleGetter(unsigned long)
-    } else if(strcmp(type, @encode(unsigned long long)) == 0) {
-        MTRSwizzleGetter(unsigned long long);
-    } else if(strcmp(type, @encode(unsigned short)) == 0) {
-        MTRSwizzleGetter(unsigned short);
-    } else if((strstr(type, @encode(id)) != NULL) || (strstr(type, @encode(Class)) != 0)) {
-        MTRSwizzleGetter(id);
-    } else if(strstr(type, "ff}{") != NULL) { // TODO: of course this only works for a 2x2 e.g. CGRect
-        MTRSwizzleGetter(float *)
-    } else if(strstr(type, "=ff}") != NULL) {
-        MTRSwizzleGetter(float *)
-    } else if(strstr(type, "=ffff}") != NULL) {
-        MTRSwizzleGetter(float *);
-    } else if(strstr(type, "dd}{") != NULL) { // TODO: same here
-        MTRSwizzleGetter(double *);
-    } else if(strstr(type, "=dd}") != NULL) {
-        MTRSwizzleGetter(double *);
-    } else if(strstr(type, "=dddd}") != NULL) {
-        MTRSwizzleGetter(double *);
-    } else {
-        return NO; // this is unsupported
-    }
-    
-    return YES;
-}
-
-/**
- @brief The meat and potatotes of setter swizzling, the rest is type checking
+/*
+ Swizzles the getter and setter for the property
  
- Replaces the existing instance with one that calls @c mtr_changed first, passing
- the callee and the name of the invalidated property. That function, in turn, triggers 
- the assosciated dependency.
+ Typechecks the property to provide the correct implementations, calling MTRSwizzleProperty with
+ the type if valid. If the type is not currently supported, reports an error.
 */
 
-#define MTRSwizzleSetter(_type) \
-    void (*existing)(id self, SEL _cmd, _type value) = (void *)method_getImplementation(setter); \
-    method_setImplementation(setter, imp_implementationWithBlock(^(id other, _type value) { \
-        mtr_changed(other, property); \
-        existing(other, name, value); \
-    }));
-
-NS_INLINE void mtr_changed(id other, NSString *name)
++ (void)class:(Class)klass swizzleGetter:(SEL)getterName setter:(SEL)setterName forProperty:(NSString *)property
 {
-    [mtr_dependencyForName(other, name, NO) changed];
-}
-
-+ (BOOL)class:(Class)klass swizzleSetter:(SEL)name forProperty:(NSString *)property
-{
-    Method setter = class_getInstanceMethod(klass, name);
-    if(setter == NULL) {
-        return YES;
-    }
+    static const size_t mtr_typeLength = 64;
     
-    // we need to check the return type to ensure we can support any value
+    Method getter = class_getInstanceMethod(klass, getterName);
+    Method setter = class_getInstanceMethod(klass, setterName);
+    
+    // not much to do in this case
+    if(getter == NULL && setter == NULL) {
+        return;
+    }
+   
+    // we need to check the getter (if it exists) or the setter for the property type
     char type[mtr_typeLength];
-    method_getArgumentType(setter, 2, type, mtr_typeLength);
-    
-    // check every return type so that we can swizzle the right signature
-    // this logic is borrowed heavily from Expecta, thx!
-    if(strcmp(type, @encode(char)) == 0) {
-        MTRSwizzleSetter(char);
-    } else if(strcmp(type, @encode(_Bool)) == 0) {
-        MTRSwizzleSetter(_Bool);
-    } else if(strcmp(type, @encode(double)) == 0) {
-        MTRSwizzleSetter(float);
-    } else if(strcmp(type, @encode(float)) == 0) {
-        MTRSwizzleSetter(float);
-    } else if(strcmp(type, @encode(int)) == 0) {
-        MTRSwizzleSetter(int);
-    } else if(strcmp(type, @encode(long)) == 0) {
-        MTRSwizzleSetter(long);
-    } else if(strcmp(type, @encode(long long)) == 0) {
-        MTRSwizzleSetter(long long);
-    } else if(strcmp(type, @encode(short)) == 0) {
-        MTRSwizzleSetter(short);
-    } else if(strcmp(type, @encode(unsigned char)) == 0) {
-        MTRSwizzleSetter(unsigned char);
-    } else if(strcmp(type, @encode(unsigned int)) == 0) {
-        MTRSwizzleSetter(unsigned int);
-    } else if(strcmp(type, @encode(unsigned long)) == 0) {
-        MTRSwizzleSetter(unsigned long)
-    } else if(strcmp(type, @encode(unsigned long long)) == 0) {
-        MTRSwizzleSetter(unsigned long long);
-    } else if(strcmp(type, @encode(unsigned short)) == 0) {
-        MTRSwizzleSetter(unsigned short);
-    } else if((strstr(type, @encode(id)) != NULL) || (strstr(type, @encode(Class)) != 0)) {
-        MTRSwizzleSetter(id);
-    } else if(strstr(type, "ff}{") != NULL) { //TODO: of course this only works for a 2x2 e.g. CGRect
-        MTRSwizzleSetter(float *)
-    } else if(strstr(type, "=ff}") != NULL) {
-        MTRSwizzleSetter(float *)
-    } else if(strstr(type, "=ffff}") != NULL) {
-        MTRSwizzleSetter(float *);
-    } else if(strstr(type, "dd}{") != NULL) { //TODO: same here
-        MTRSwizzleSetter(double *);
-    } else if(strstr(type, "=dd}") != NULL) {
-        MTRSwizzleSetter(double *);
-    } else if(strstr(type, "=dddd}") != NULL) {
-        MTRSwizzleSetter(double *);
+    if(getter != NULL) {
+        method_getReturnType(getter, type, mtr_typeLength);
     } else {
-        return NO; // this is unsupported
+        method_getArgumentType(setter, 2, type, mtr_typeLength);
     }
-    
-    return YES;
+   
+    // check each type so that we can swizzle the right signatures. this logic is borrowed
+    // heavily from Expecta, thx!
+    if(strcmp(type, @encode(char)) == 0) {
+        MTRSwizzleProperty(char);
+    } else if(strcmp(type, @encode(_Bool)) == 0) {
+        MTRSwizzleProperty(_Bool);
+    } else if(strcmp(type, @encode(double)) == 0) {
+        MTRSwizzleProperty(float);
+    } else if(strcmp(type, @encode(float)) == 0) {
+        MTRSwizzleProperty(float);
+    } else if(strcmp(type, @encode(int)) == 0) {
+        MTRSwizzleProperty(int);
+    } else if(strcmp(type, @encode(long)) == 0) {
+        MTRSwizzleProperty(long);
+    } else if(strcmp(type, @encode(long long)) == 0) {
+        MTRSwizzleProperty(long long);
+    } else if(strcmp(type, @encode(short)) == 0) {
+        MTRSwizzleProperty(short);
+    } else if(strcmp(type, @encode(unsigned char)) == 0) {
+        MTRSwizzleProperty(unsigned char);
+    } else if(strcmp(type, @encode(unsigned int)) == 0) {
+        MTRSwizzleProperty(unsigned int);
+    } else if(strcmp(type, @encode(unsigned long)) == 0) {
+        MTRSwizzleProperty(unsigned long)
+    } else if(strcmp(type, @encode(unsigned long long)) == 0) {
+        MTRSwizzleProperty(unsigned long long);
+    } else if(strcmp(type, @encode(unsigned short)) == 0) {
+        MTRSwizzleProperty(unsigned short);
+    } else if((strstr(type, @encode(id)) != NULL) || (strstr(type, @encode(Class)) != 0)) {
+        MTRSwizzleProperty(id);
+    } else if(strstr(type, "ff}{") != NULL) {
+        MTRSwizzleProperty(float *)
+    } else if(strstr(type, "=ff}") != NULL) {
+        MTRSwizzleProperty(float *)
+    } else if(strstr(type, "=ffff}") != NULL) {
+        MTRSwizzleProperty(float *);
+    } else if(strstr(type, "dd}{") != NULL) {
+        MTRSwizzleProperty(double *);
+    } else if(strstr(type, "=dd}") != NULL) {
+        MTRSwizzleProperty(double *);
+    } else if(strstr(type, "=dddd}") != NULL) {
+        MTRSwizzleProperty(double *);
+    } else {
+        printf("%s: %s - MTRReactive doesn't support properties of this type\n", class_getName(klass), property.UTF8String);
+        printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
+        printf("\tb. Submit a pull request\n");
+    }
 }
 
 @end
