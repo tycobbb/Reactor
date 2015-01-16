@@ -46,10 +46,6 @@
     
     properties = class_copyPropertyList(klass, &count);
    
-    // filter out properties added in by the runtime:
-    //   "hash", "superclass", "description", "debugDescription"
-    count -= 4;
-   
     for(int index=0 ; index<count ; index++) {
         objc_property_t property = properties[index];
         const char *name = property_getName(property);
@@ -226,18 +222,15 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
     Method getter = class_getInstanceMethod(klass, getterName);
     Method setter = class_getInstanceMethod(klass, setterName);
     
-    // not much to do in this case
-    if(getter == NULL && setter == NULL) {
+    // if the property doesn't have a setter, we're not going to make it reative; this also
+    // filters some system properties: hash, description, debugDescription, superclass
+    if(setter == NULL) {
         return;
     }
    
     // we need to check the getter (if it exists) or the setter for the property type
     char type[mtr_typeLength];
-    if(getter != NULL) {
-        method_getReturnType(getter, type, mtr_typeLength);
-    } else {
-        method_getArgumentType(setter, 2, type, mtr_typeLength);
-    }
+    method_getArgumentType(setter, 2, type, mtr_typeLength);
    
     // check each type so that we can swizzle the right signatures. this logic is borrowed
     // heavily from Expecta, thx!

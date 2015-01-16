@@ -14,16 +14,6 @@
 
 @implementation MTRLawyer
 
-+ (NSArray *)nonreactiveProperties:(id)object
-{
-    // `fullname` doesn't _need_ to be explicitly reactive (though it certainly
-    // could be), because it's a pass-through to name (which is reactive).
-    
-    return @[
-        @"fullname"
-    ];
-}
-
 - (NSString *)fullname
 {
     return [NSString stringWithFormat:@"%@ Marhsall Thomas Esq", self.name];
