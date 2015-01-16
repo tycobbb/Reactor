@@ -73,9 +73,16 @@
         if(setterName == NULL) {
             setterName = mtr_setterNameFromProperty(name);
         }
-       
-        [self class:klass swizzleGetter:sel_registerName(getterName) forProperty:objcName];
-        [self class:klass swizzleSetter:sel_registerName(setterName) forProperty:objcName];
+      
+        BOOL error;
+        error = [self class:klass swizzleGetter:sel_registerName(getterName) forProperty:objcName];
+        error = [self class:klass swizzleSetter:sel_registerName(setterName) forProperty:objcName];
+        
+        if(!error) {
+            printf("%s: %s - MTRReactive doesn't support properties of this type\n", class_getName(klass), name);
+            printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
+            printf("\tb. Submit a pull request\n");
+        }
         
         free(_getterName);
         free(setterName);
@@ -195,7 +202,7 @@ NS_INLINE void mtr_depend(id other, NSString *name)
     }
     
     // we need to check the return type to ensure we can support any value
-    char type[8];
+    char type[256];
     method_getReturnType(getter, type, 8);
    
     // check every return type so that we can swizzle the right signature
