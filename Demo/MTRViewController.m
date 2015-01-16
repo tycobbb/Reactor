@@ -34,7 +34,7 @@
 {
     [super viewDidLoad];
     
-    self.thoughts = @"I'm good.";
+    self.thoughts = @"I'm good";
     
     MTRReactiveSubmodel *model = [MTRReactiveSubmodel new];
     model.name = @"John";

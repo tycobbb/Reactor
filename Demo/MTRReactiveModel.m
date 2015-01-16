@@ -10,13 +10,10 @@
 
 @implementation MTRReactiveModel
 
-+ (NSArray *)reactiveProperties:(id)object
++ (NSArray *)nonreactiveProperties:(id)object
 {
     return @[
-        @"name",
-        @"status",
-        @"num",
-        @"rect"
+        @"age"
     ];
 }
 

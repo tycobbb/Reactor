@@ -13,7 +13,6 @@
 #import "MTRReactor.h"
 #import "MTRDependency.h"
 
-
 @implementation MTRReactiveEngine
 
 + (void)engage
@@ -132,7 +131,8 @@ NS_INLINE char * mtr_setterNameFromProperty(const char *name)
 
 # pragma mark - Swizzling
 
-char *mtr_dependenciesKey;
+const char *mtr_dependenciesKey;
+const size_t mtr_typeLength = 64;
 
 /**
  @brief Looks up a dependency on a reactive object
@@ -202,8 +202,8 @@ NS_INLINE void mtr_depend(id other, NSString *name)
     }
     
     // we need to check the return type to ensure we can support any value
-    char type[256];
-    method_getReturnType(getter, type, 8);
+    char type[mtr_typeLength];
+    method_getReturnType(getter, type, mtr_typeLength);
    
     // check every return type so that we can swizzle the right signature
     // this logic is borrowed heavily from Expecta, thx!
@@ -235,13 +235,13 @@ NS_INLINE void mtr_depend(id other, NSString *name)
         MTRSwizzleGetter(unsigned short);
     } else if((strstr(type, @encode(id)) != NULL) || (strstr(type, @encode(Class)) != 0)) {
         MTRSwizzleGetter(id);
-    } else if(strstr(type, "ff}{") != NULL) { //TODO: of course this only works for a 2x2 e.g. CGRect
+    } else if(strstr(type, "ff}{") != NULL) { // TODO: of course this only works for a 2x2 e.g. CGRect
         MTRSwizzleGetter(float *)
     } else if(strstr(type, "=ff}") != NULL) {
         MTRSwizzleGetter(float *)
     } else if(strstr(type, "=ffff}") != NULL) {
         MTRSwizzleGetter(float *);
-    } else if(strstr(type, "dd}{") != NULL) { //TODO: same here
+    } else if(strstr(type, "dd}{") != NULL) { // TODO: same here
         MTRSwizzleGetter(double *);
     } else if(strstr(type, "=dd}") != NULL) {
         MTRSwizzleGetter(double *);
@@ -282,8 +282,8 @@ NS_INLINE void mtr_changed(id other, NSString *name)
     }
     
     // we need to check the return type to ensure we can support any value
-    char type[8];
-    method_getArgumentType(setter, 2, type, 8);
+    char type[mtr_typeLength];
+    method_getArgumentType(setter, 2, type, mtr_typeLength);
     
     // check every return type so that we can swizzle the right signature
     // this logic is borrowed heavily from Expecta, thx!
