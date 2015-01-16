@@ -2,11 +2,11 @@
 Pod::Spec.new do |s|
 
   s.name         = "Reactor"
-  s.version      = "0.1.0rc1"
+  s.version      = "0.1.1"
   s.summary      = "Transparent reactivity based on Meteor.Tracker"
   s.description  = <<-DESC
-                   Reactor provides mechanisms for writing reactive code with transparently-defined dependencies. It's based on the Tracker
-                   library from [Meteor.js](https://www.meteor.com/), which you can view the source for [here](https://github.com/meteor/meteor/blob/devel/packages/tracker/tracker.js).
+                   Reactor provides mechanisms for writing transparently reactive code. It's based on the Tracker library 
+                   from [Meteor.js](https://www.meteor.com/), which you can view the source for [here](https://github.com/meteor/meteor/blob/devel/packages/tracker/tracker.js).
                    DESC
 
   s.homepage     = "https://github.com/derkis/Reactor"
