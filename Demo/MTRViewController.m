@@ -9,12 +9,13 @@
 #import "MTRViewController.h"
 #import "MTRReactor.h"
 #import "MTRDependency.h"
-#import "MTRReactiveModel.h"
+#import "MTRPerson.h"
 
 @interface MTRViewController () <UITextFieldDelegate>
 @property (copy  , nonatomic) NSString *thoughts;
 @property (strong, nonatomic) MTRDependency *thoughtsDependency;
 @property (weak  , nonatomic) IBOutlet UILabel *responseLabel;
+@property (weak  , nonatomic) IBOutlet UITextField *adviceField;
 @end
 
 @implementation MTRViewController
@@ -34,28 +35,37 @@
 {
     [super viewDidLoad];
     
-    self.thoughts = @"I'm good";
+    self.adviceField.text = @"You should take the plea.";
+    self.thoughts = self.adviceField.text;
     
-    MTRReactiveSubmodel *model = [MTRReactiveSubmodel new];
-    model.name = @"John";
+    MTRLawyer *lawyer = [MTRLawyer new];
+    lawyer.name = @"John";
   
     [MTRReactor autorun:^(MTRComputation *computation) {
-        self.responseLabel.text = [self respondToThoughts:self.thoughts forPerson:model.name];
+        self.responseLabel.text = [self respondToThoughts:self.thoughts forLawyer:lawyer];
     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        model.name = @"Jane";
+        lawyer.name = @"Jane";
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        lawyer.age = 7;
     });
 }
 
-- (NSString *)respondToThoughts:(NSString *)thoughts forPerson:(NSString *)person
+- (NSString *)respondToThoughts:(NSString *)thoughts forLawyer:(MTRLawyer *)lawyer
 {
     if(!thoughts.length) {
         return @"Hmm...";
     }
     
-    thoughts = [NSString stringWithFormat:@"%@? That's funny %@.", thoughts, person];
-    thoughts = [thoughts stringByReplacingOccurrencesOfString:@"I'm" withString:@"You're" options:NSCaseInsensitiveSearch range:(NSRange){ .length = thoughts.length }];
+    if([thoughts hasSuffix:@"."]) {
+        thoughts = [thoughts substringToIndex:thoughts.length-1];
+    }
+    
+    thoughts = [NSString stringWithFormat:@"%@? That's nice %@, but I don't take advice from %d year-old lawyers.", thoughts, lawyer.fullname, (int)lawyer.age];
+    thoughts = [thoughts stringByReplacingOccurrencesOfString:@"You" withString:@"I" options:NSCaseInsensitiveSearch range:(NSRange){ .length = thoughts.length }];
     
     return thoughts;
 }
