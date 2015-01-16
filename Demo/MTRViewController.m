@@ -13,8 +13,11 @@
 
 @interface MTRViewController () <UITextFieldDelegate>
 @property (copy  , nonatomic) NSString *thoughts;
+@property (assign, nonatomic) NSInteger ticks;
 @property (strong, nonatomic) MTRDependency *thoughtsDependency;
+@property (strong, nonatomic) MTRDependency *ticksDependency;
 @property (weak  , nonatomic) IBOutlet UILabel *responseLabel;
+@property (weak  , nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak  , nonatomic) IBOutlet UITextField *adviceField;
 @end
 
@@ -26,6 +29,7 @@
 {
     if(self = [super initWithCoder:aDecoder]) {
         _thoughtsDependency = [MTRDependency new];
+        _ticksDependency = [MTRDependency new];
     }
     
     return self;
@@ -34,17 +38,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+   
+    // set up initial conditions
     self.adviceField.text = @"You should take the plea.";
     self.thoughts = self.adviceField.text;
     
     MTRLawyer *lawyer = [MTRLawyer new];
     lawyer.name = @"John";
-  
+
+    // run reactions
+    [MTRReactor autorun:self action:@selector(tick:)];
     [MTRReactor autorun:^(MTRComputation *computation) {
         self.responseLabel.text = [self respondToThoughts:self.thoughts forLawyer:lawyer];
     }];
     
+    // invalidate reactions
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         lawyer.name = @"Jane";
     });
@@ -68,6 +76,21 @@
     thoughts = [thoughts stringByReplacingOccurrencesOfString:@"You" withString:@"I" options:NSCaseInsensitiveSearch range:(NSRange){ .length = thoughts.length }];
     
     return thoughts;
+}
+
+# pragma mark - Reactions
+
+- (void)tick:(MTRComputation *)computation
+{
+    self.timeLabel.text = @(self.ticks++).description;
+    
+    if(self.ticks < 11) {
+        [self.ticksDependency depend];
+    }
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.ticksDependency changed];
+    });
 }
 
 # pragma mark - Interface Actions

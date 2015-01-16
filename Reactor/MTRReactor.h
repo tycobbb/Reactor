@@ -43,6 +43,22 @@
 + (MTRComputation *)autorun:(void(^)(MTRComputation *))block;
 
 /**
+ @brief Starts a new computation for the given target action pair
+ 
+ The action should accept one parameter, the computation, similar to the block equivalent
+ of this method.
+ 
+ @see -autorun: for more detailed documentation.
+ 
+ @param target The target for the action
+ @param action The action to execute
+ 
+ @return The newly created computation
+*/
+
++ (MTRComputation *)autorun:(id)target action:(SEL)action;
+
+/**
  @brief Executes a block that won't trigger any dependencies
  
  This is useful for running non-reactive code within a computation that may trigger 

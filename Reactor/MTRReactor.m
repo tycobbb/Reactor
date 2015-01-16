@@ -42,6 +42,16 @@
     return [[self reactor] autorun:block];
 }
 
++ (MTRComputation *)autorun:(id)target action:(SEL)action
+{
+    return [[self reactor] autorun:^(MTRComputation *computation) {
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        [target performSelector:action withObject:computation];
+# pragma clang diagnosic pop
+    }];
+}
+
 + (void)nonreactive:(void (^)(void))block
 {
     [[self reactor] nonreactive:block];

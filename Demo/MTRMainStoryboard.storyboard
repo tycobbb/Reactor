@@ -46,11 +46,18 @@
                                             <action selector="textFieldDidChangeText:" destination="vXZ-lx-hvc" eventType="editingChanged" id="Isx-VI-pgi"/>
                                         </connections>
                                     </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0s" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sOi-fb-hsu">
+                                        <rect key="frame" x="545" y="0.0" width="15" height="20"/>
+                                        <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="ou1-c4-g9V" secondAttribute="trailing" id="5Ns-C0-4np"/>
                                     <constraint firstItem="UAR-HS-Yb4" firstAttribute="top" secondItem="G7y-qB-PAa" secondAttribute="bottom" constant="20" id="7lZ-08-Hms"/>
+                                    <constraint firstItem="sOi-fb-hsu" firstAttribute="top" secondItem="T6x-Kd-bny" secondAttribute="top" id="Aah-uq-z6V"/>
                                     <constraint firstItem="ou1-c4-g9V" firstAttribute="leading" secondItem="T6x-Kd-bny" secondAttribute="leading" id="BxP-s2-VZj"/>
                                     <constraint firstItem="SQV-nh-rMu" firstAttribute="top" secondItem="T6x-Kd-bny" secondAttribute="top" id="CmG-Jy-1At"/>
                                     <constraint firstItem="G7y-qB-PAa" firstAttribute="leading" secondItem="T6x-Kd-bny" secondAttribute="leading" id="YFl-65-yQU"/>
@@ -58,6 +65,7 @@
                                     <constraint firstAttribute="trailing" secondItem="G7y-qB-PAa" secondAttribute="trailing" id="bjF-Be-rlL"/>
                                     <constraint firstItem="G7y-qB-PAa" firstAttribute="top" secondItem="SQV-nh-rMu" secondAttribute="bottom" constant="8" id="lOu-bX-QJF"/>
                                     <constraint firstItem="ou1-c4-g9V" firstAttribute="top" secondItem="UAR-HS-Yb4" secondAttribute="bottom" constant="8" id="tOb-KW-Q4X"/>
+                                    <constraint firstAttribute="trailing" secondItem="sOi-fb-hsu" secondAttribute="trailing" id="uBL-zN-Eq9"/>
                                     <constraint firstItem="UAR-HS-Yb4" firstAttribute="leading" secondItem="T6x-Kd-bny" secondAttribute="leading" id="zCx-yA-5ou"/>
                                 </constraints>
                             </view>
@@ -73,6 +81,7 @@
                     <connections>
                         <outlet property="adviceField" destination="G7y-qB-PAa" id="o3N-Wi-jAR"/>
                         <outlet property="responseLabel" destination="ou1-c4-g9V" id="SW0-my-kNa"/>
+                        <outlet property="timeLabel" destination="sOi-fb-hsu" id="oty-fq-Nda"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
