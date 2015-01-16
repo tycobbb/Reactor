@@ -36,7 +36,7 @@
     
     self.thoughts = @"I'm good.";
     
-    MTRReactiveModel *model = [MTRReactiveModel new];
+    MTRReactiveSubmodel *model = [MTRReactiveSubmodel new];
     model.name = @"John";
   
     [MTRReactor autorun:^(MTRComputation *computation) {

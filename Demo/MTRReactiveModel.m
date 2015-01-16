@@ -10,4 +10,18 @@
 
 @implementation MTRReactiveModel
 
++ (NSArray *)reactiveProperties:(id)object
+{
+    return @[
+        @"name",
+        @"status",
+        @"num",
+        @"rect"
+    ];
+}
+
+@end
+
+@implementation MTRReactiveSubmodel
+
 @end

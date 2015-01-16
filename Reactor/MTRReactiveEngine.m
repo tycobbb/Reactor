@@ -13,6 +13,7 @@
 #import "MTRReactor.h"
 #import "MTRDependency.h"
 
+
 @implementation MTRReactiveEngine
 
 + (void)engage
@@ -31,8 +32,13 @@
     free(classes);
 }
 
-+ (void)reactify:(Class)klass
++ (void)reactify:(Class<MTRReactive>)klass
 {
+    NSArray *whitelist = mtr_invokeKeygenMethod(klass, @selector(reactiveProperties:));
+    NSArray *blacklist = mtr_invokeKeygenMethod(klass, @selector(nonreactiveProperties:));
+   
+    NSAssert(!whitelist || !blacklist, @"Both +whitelist: and +blacklist: are not allowed on the same class");
+    
     objc_property_t *properties; uint count;
     
     properties = class_copyPropertyList(klass, &count);
@@ -44,6 +50,12 @@
     for(int index=0 ; index<count ; index++) {
         objc_property_t property = properties[index];
         const char *name = property_getName(property);
+        
+        // ensure that the white/blacklist accepts permits this property
+        NSString *objcName = @(name);
+        if((blacklist && [blacklist containsObject:objcName]) || (whitelist && ![whitelist containsObject:objcName])) {
+            continue;
+        }
        
         // getter may or may not be dynamically allocated; if so, store in _getterName
         // so that it can be freed
@@ -62,14 +74,31 @@
             setterName = mtr_setterNameFromProperty(name);
         }
        
-        [self class:klass swizzleGetter:sel_registerName(getterName) forProperty:@(name)];
-        [self class:klass swizzleSetter:sel_registerName(setterName) forProperty:@(name)];
+        [self class:klass swizzleGetter:sel_registerName(getterName) forProperty:objcName];
+        [self class:klass swizzleSetter:sel_registerName(setterName) forProperty:objcName];
         
         free(_getterName);
         free(setterName);
     }
     
     free(properties);
+}
+
+
+NSArray * mtr_invokeKeygenMethod(Class<MTRReactive> klass, SEL name)
+{
+    typedef NSArray *(*MTRKeygen)(id, SEL, id);
+    
+    Method local  = class_getClassMethod(klass, name);
+    Method parent = class_getClassMethod(class_getSuperclass(klass), name);
+    
+    // we only want to invoke the method if the local imp is unique
+    if(local && local != parent) {
+        MTRKeygen keygen = (MTRKeygen)method_getImplementation(local);
+        return keygen(klass, name, nil);
+    }
+    
+    return nil;
 }
 
 # pragma mark - Naming

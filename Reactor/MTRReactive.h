@@ -11,14 +11,31 @@
 @protocol MTRReactive <NSObject> @optional
 
 /**
- @brief Returns a list of non-reactive keys 
+ @brief Blacklist non-reactive keys
 
- Any properties whose keys are not returned in this will have an implicity dependency
- created for them if they are accessed inside a computation.
+ Any properties whose keys are not returned are assosciated with an implicit dependency
+ when accessed inside a computation.
+ 
+ @attention Mutually exclusive with @c +reactive:
 
+ @param object A placeholder instance; always nil
  @return An array of string keys corresponding to properties on the reactive class
 */
 
-+ (NSArray *)nonreactive;
++ (NSArray *)nonreactiveProperties:(id)object;
+
+/**
+ @brief Whitelist of reactive keys
+ 
+ Any properties whose keys are returned are assosciated with an implicit dependency
+ when accessed inside a computation.
+ 
+ @attention Mutually exclusive with @c +nonreactive:
+ 
+ @param object A placeholder instance; always nil
+ @return An array of string keys corresponding to properties on the reactive class
+*/
+
++ (NSArray *)reactiveProperties:(id)object;
 
 @end

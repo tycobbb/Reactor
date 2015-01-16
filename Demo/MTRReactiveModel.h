@@ -19,3 +19,7 @@
 @property (nonatomic) CGPoint point;
 @property (copy, nonatomic) void(^block)(void);
 @end
+
+@interface MTRReactiveSubmodel : MTRReactiveModel <MTRReactive>
+@property (nonatomic) NSString *face;
+@end
