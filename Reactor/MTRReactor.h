@@ -40,7 +40,7 @@
  @return The newly created computation
 */
 
-+ (MTRComputation *)autorun:(void(^)(MTRComputation *))block;
++ (MTRComputation *)autorun:(void(^)(MTRComputation *computation))block;
 
 /**
  @brief Starts a new computation for the given target action pair
@@ -89,7 +89,7 @@
  @brief handler The handler to call on invalidation 
 */
 
-- (void)onInvalidate:(void(^)(MTRComputation *))handler;
+- (void)onInvalidate:(void(^)(MTRComputation *computation))handler;
 
 /**
  @brief Schedules a handler to run after the next, or current, flush
