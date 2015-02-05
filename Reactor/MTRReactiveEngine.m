@@ -7,6 +7,7 @@
 //
 
 @import ObjectiveC;
+@import UIKit;
 
 #import "MTRReactiveEngine.h"
 #import "MTRReactive.h"
@@ -262,18 +263,12 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
         MTRSwizzleProperty(unsigned short);
     } else if((strstr(type, @encode(id)) != NULL) || (strstr(type, @encode(Class)) != 0)) {
         MTRSwizzleProperty(id);
-    } else if(strstr(type, "ff}{") != NULL) {
-        MTRSwizzleProperty(float *)
-    } else if(strstr(type, "=ff}") != NULL) {
-        MTRSwizzleProperty(float *)
-    } else if(strstr(type, "=ffff}") != NULL) {
-        MTRSwizzleProperty(float *);
-    } else if(strstr(type, "dd}{") != NULL) {
-        MTRSwizzleProperty(double *);
-    } else if(strstr(type, "=dd}") != NULL) {
-        MTRSwizzleProperty(double *);
-    } else if(strstr(type, "=dddd}") != NULL) {
-        MTRSwizzleProperty(double *);
+    } else if(strcmp(type, @encode(CGRect)) == 0) {
+        MTRSwizzleProperty(CGRect);
+    } else if(strcmp(type, @encode(CGPoint)) == 0) {
+        MTRSwizzleProperty(CGPoint);
+    } else if(strcmp(type, @encode(CGSize)) == 0) {
+        MTRSwizzleProperty(CGSize);
     } else {
         printf("%s: %s - MTRReactive doesn't support properties of this type\n", class_getName(klass), property.UTF8String);
         printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
