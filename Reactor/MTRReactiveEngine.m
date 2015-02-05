@@ -239,7 +239,7 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
     } else if(strcmp(type, @encode(_Bool)) == 0) {
         MTRSwizzleProperty(_Bool);
     } else if(strcmp(type, @encode(double)) == 0) {
-        MTRSwizzleProperty(float);
+        MTRSwizzleProperty(double);
     } else if(strcmp(type, @encode(float)) == 0) {
         MTRSwizzleProperty(float);
     } else if(strcmp(type, @encode(int)) == 0) {

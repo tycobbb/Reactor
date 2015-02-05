@@ -16,5 +16,6 @@
 
 @interface MTRLawyer : MTRPerson <MTRReactive>
 @property (assign, nonatomic) NSInteger age;
+@property (assign, nonatomic) CGRect body;
 @property (copy  , nonatomic, readonly) NSString *fullname;
 @end

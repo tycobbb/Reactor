@@ -48,8 +48,13 @@
 
     // run reactions
     [MTRReactor autorun:self action:@selector(tick:)];
+    
     [MTRReactor autorun:^(MTRComputation *computation) {
         self.responseLabel.text = [self respondToThoughts:self.thoughts forLawyer:lawyer];
+    }];
+    
+    [MTRReactor autorun:^(MTRComputation *computation) {
+        NSLog(@"%@", NSStringFromCGRect(lawyer.body));
     }];
     
     // invalidate reactions
@@ -59,6 +64,10 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         lawyer.age = 7;
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        lawyer.body = (CGRect){ 0.0f, 0.0f, 10.0f, 80.0f };
     });
 }
 
