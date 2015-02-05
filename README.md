@@ -1,5 +1,5 @@
 # Reactor
-Reactor provides mechanisms for writing transparently reactive code. It's based on the Tracker
+Reactor in an Objective-C library that provides mechanisms for writing transparently reactive code. It's based on the Tracker
 library from [Meteor.js](https://www.meteor.com/), which you can view the source for [here](https://github.com/meteor/meteor/blob/devel/packages/tracker/tracker.js).
 
 ## How does it work?
@@ -17,16 +17,16 @@ for(int i=0 ; i<100 ; i++) {
 }
 ```
 
-Seems like there's a wizard behind the curtain, right? There is, so let's get a good look at his underthings. Reactor has two core building blocks, `MTRComputation` and `MTRDependency`, which are linked up on the sly to provide the reactivity.
+Seems like there's a wizard behind the curtain, right? There is! Let's get a good look at his underthings. Reactor has two core components, `MTRComputation` and `MTRDependency`, that are linked up on the sly by `MTRReactor` to provide reactivity.
 
 ### Computations
-An `MTRComputation` is created every time you call `-autorun:`&mdash;it is an object that encapsulates the block you pass to
-the same. Only one computation can run at a time, and the one that's running is what's known as the
+An `MTRComputation` is created every time you call `-autorun:`&mdash;it's an object that encapsulates the block you pass to
+the same. Only one computation can run at a time, and the running computation is known as the
 ```Haskell
 "current computation"
 ```
-The block passed to `-autorun:` is called immediately to update the view, but it also has another purpose. Namely, to infer what 
-this new computation's *dependencies* are. And how does that happen?
+The block passed to `-autorun:` is called immediately to update the view, but it's also used to infer what 
+this new computation's *dependencies* are. How does that happen?
 
 ### Dependencies
 Here's the wizard's torso (it's what he uses to wave hello):
@@ -38,7 +38,7 @@ Here's the wizard's torso (it's what he uses to wave hello):
 }
 ```
 
-This bit was left off the original example, but it in the accessor for `counter` we were secretly calling `-depend` another 
+This bit was left off the original example. In the accessor for `counter` we're secretly calling `-depend` another 
 property, `counterDependency`, which we created earlier:
 ```Objective-C
 self.counterDependency = [MTRDependency new]
@@ -52,9 +52,7 @@ dependency. The legs, the powertrain:
     [self.counterDependency changed];
 }
 ```
-When `-changed` is called on a dependency, and of its dependent computation will be re-run. This updates your UI, re-establishes
-the dependency relationships, and kicks-off the cycle all over again. It's not that magical, eh? You've got legs and a torso,
-you're just as capable as any wizard.
+When `-changed` is called on a dependency, all of its *dependent* computations will be re-run. This updates your UI, re-establishes the dependent relationships, and kicks-off the cycle all over again. It's not that magical, eh? With legs and a torso you're as capable as any wizard.
 
 ## Declarative Reactivity
 
