@@ -81,7 +81,20 @@
 + (instancetype)reactor;
 
 /**
- @brief Schedules handler to run when the current computation is invalidated
+ @brief Immediately runs any scheduled reactive updates
+
+ Normally, @c MTRReactor schedules @c -flush to be called during the next run-loop
+ after a computation is invalidated. Users may call this method if its necessary 
+ to flush immediately.
+ 
+ Calling @c -flush inside a computation or during an existing @c -flush throws an
+ exception.
+*/
+
+- (void)flush;
+
+/**
+ @brief Schedules a handler to run when the current computation is invalidated
  
  This method throws an exception if there is no current computation. Otherwise,
  when the computation is invalidated it will call this block.
