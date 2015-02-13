@@ -87,11 +87,11 @@
  after a computation is invalidated. Users may call this method if its necessary 
  to flush immediately.
  
- Calling @c -flush inside a computation or during an existing @c -flush throws an
- exception.
+ Calling @c -flush inside a computation or during an existing @c -flush does nothing
+ and returns an error.
 */
 
-- (void)flush;
+- (NSError *)flush;
 
 /**
  @brief Schedules a handler to run when the current computation is invalidated
@@ -122,3 +122,4 @@
 //
 
 extern NSString * const MTRReactorError;
+extern NSString * const MTRReactorFlushError;

@@ -120,10 +120,15 @@
     }
 }
 
-- (void)flush
+- (NSError *)flush
 {
-    MTRAssert(!self.isFlushing, @"Can't call -flush while already flushing.");
-    MTRAssert(!self.isComputing, @"Can't call -flush inside an computation.");
+    // check flushing preconditions
+    if(self.isFlushing) {
+        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush while already flushing" }];
+    }
+    else if(self.isComputing) {
+        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush inside a computation." }];
+    }
     
     self.flushScheduled = YES;
     self.isFlushing = YES;
@@ -146,6 +151,9 @@
     
     self.flushScheduled = NO;
     self.isFlushing = NO;
+   
+    // return no error if we flush happily
+    return nil;
 }
 
 # pragma mark - Hooks
@@ -174,6 +182,7 @@
 //
 
 NSString * const MTRReactorError = @"MTRReactorError";
+NSString * const MTRReactorFlushError = @"MTRReachingFlushError";
 
 void MTRAssert(BOOL condition, NSString *format, ...)
 {
