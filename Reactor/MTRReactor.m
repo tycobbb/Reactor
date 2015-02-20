@@ -167,7 +167,9 @@
 - (void)afterFlush:(void (^)(void))handler
 {
     NSParameterAssert(handler);
+    
     [self.afterFlushHandlers addObject:handler];
+    [self scheduleFlush];
 }
 
 # pragma mark - Accessors
