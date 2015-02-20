@@ -90,6 +90,7 @@
 {
     // save the current computation
     MTRComputation *previous = self.currentComputation;
+    BOOL previousIsComputing = self.isComputing;
     
     // update the current computation
     self.currentComputation = computation;
@@ -99,7 +100,7 @@
     
     // reset the computation
     self.currentComputation = previous;
-    self.isComputing = NO;
+    self.isComputing = previousIsComputing;
 }
 
 # pragma mark - Scheduling/Flushing

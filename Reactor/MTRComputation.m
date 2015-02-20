@@ -45,11 +45,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    
-}
-
 # pragma mark - Execution
 
 - (void)compute
