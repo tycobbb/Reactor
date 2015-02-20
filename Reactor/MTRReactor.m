@@ -155,15 +155,22 @@
     self.flushScheduled = NO;
     self.isFlushing = NO;
     
-    // call all the after flush handlers
-    for(void(^handler)(void) in self.afterFlushHandlers) {
-        handler();
-    }
-    
-    [self.afterFlushHandlers removeAllObjects];
+    [self runAfterFlushHooks];
     
     // return no error if we flush happily
     return nil;
+}
+
+- (void)runAfterFlushHooks
+{
+    // grab a copy of the handlers and remove them, in case one of them re-flushes
+    NSArray *handlers = [self.afterFlushHandlers copy];
+    [self.afterFlushHandlers removeAllObjects];
+    
+    // call all the after flush handlers
+    for(void(^handler)(void) in handlers) {
+        handler();
+    }
 }
 
 # pragma mark - Hooks
