@@ -104,6 +104,17 @@
 
 - (void)onInvalidate:(void(^)(MTRComputation *computation))handler;
 
+/** 
+ @brief Schedules a handler to runs during the next flush after all computations compute
+
+ This method also schedules a flush if there isn't already one scheduled. If this handler 
+ invalidates other computations, they will run during immediately during the calling flush.
+ 
+ @param handler The handler to schedule
+*/
+
+- (void)beforeFinishingFlush:(void(^)(void))handler;
+
 /**
  @brief Schedules a handler to run after the next, or current, flush
  

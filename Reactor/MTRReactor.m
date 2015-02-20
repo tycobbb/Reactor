@@ -29,7 +29,8 @@
     
     if(self = [super init]) {
         _pendingComputations = [NSMutableArray new];
-        _afterFlushHandlers  = [NSMutableArray new];
+        _beforeFinishingFlushHandlers = [NSMutableArray new];
+        _afterFlushHandlers = [NSMutableArray new];
     }
     
     return self;
@@ -134,7 +135,7 @@
     self.flushScheduled = YES;
     self.isFlushing = YES;
     
-    while(self.pendingComputations.count || self.afterFlushHandlers.count) {
+    while(self.pendingComputations.count || self.beforeFinishingFlushHandlers.count) {
         
         // recompute all the computations
         while(self.pendingComputations.count) {
@@ -143,16 +144,24 @@
             [computation recompute];
         }
         
-        if(self.afterFlushHandlers.count) {
+        if(self.beforeFinishingFlushHandlers.count) {
             // after flush handlers can invalidate more computations
-            void(^handler)(void) = [self.afterFlushHandlers mtr_shift];
+            void(^handler)(void) = [self.beforeFinishingFlushHandlers mtr_shift];
             handler();
         }
     }
-    
+   
+    // mark the flush as complete
     self.flushScheduled = NO;
     self.isFlushing = NO;
-   
+    
+    // call all the after flush handlers
+    for(void(^handler)(void) in self.afterFlushHandlers) {
+        handler();
+    }
+    
+    [self.afterFlushHandlers removeAllObjects];
+    
     // return no error if we flush happily
     return nil;
 }
@@ -163,6 +172,14 @@
 {
     MTRAssert(self.isActive, @"Can't add an onInvalidate handler if there's no computation");
     [self.currentComputation onInvalidate:handler];
+}
+
+- (void)beforeFinishingFlush:(void (^)(void))handler
+{
+    NSParameterAssert(handler);
+    
+    [self.beforeFinishingFlushHandlers addObject:handler];
+    [self scheduleFlush];
 }
 
 - (void)afterFlush:(void (^)(void))handler

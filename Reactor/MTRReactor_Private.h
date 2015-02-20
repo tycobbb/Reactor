@@ -15,6 +15,8 @@
 @property (assign, nonatomic) NSInteger nextId;
 /** Computations waiting to be flushed */
 @property (strong, nonatomic) NSMutableArray *pendingComputations;
+/** Blocks to be called before the current flush finishes */
+@property (strong, nonatomic) NSMutableArray *beforeFinishingFlushHandlers;
 /** Blocks to be called once the flush completes */
 @property (strong, nonatomic) NSMutableArray *afterFlushHandlers;
 /** @c YES when a pending computation flush is scheduled or is in progress */
