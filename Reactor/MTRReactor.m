@@ -29,8 +29,8 @@
     
     if(self = [super init]) {
         _pendingComputations = [NSMutableArray new];
-        _beforeFinishingFlushHandlers = [NSMutableArray new];
-        _afterFlushHandlers = [NSMutableArray new];
+        _afterFlushHandlers  = [NSMutableArray new];
+        _clearFlushHandlers  = [NSMutableArray new];
     }
     
     return self;
@@ -135,7 +135,7 @@
     self.flushScheduled = YES;
     self.isFlushing = YES;
     
-    while(self.pendingComputations.count || self.beforeFinishingFlushHandlers.count) {
+    while(self.pendingComputations.count || self.afterFlushHandlers.count) {
         
         // recompute all the computations
         while(self.pendingComputations.count) {
@@ -144,9 +144,9 @@
             [computation recompute];
         }
         
-        if(self.beforeFinishingFlushHandlers.count) {
+        if(self.afterFlushHandlers.count) {
             // after flush handlers can invalidate more computations
-            void(^handler)(void) = [self.beforeFinishingFlushHandlers mtr_shift];
+            void(^handler)(void) = [self.afterFlushHandlers mtr_shift];
             handler();
         }
     }
@@ -155,19 +155,19 @@
     self.flushScheduled = NO;
     self.isFlushing = NO;
     
-    [self runAfterFlushHooks];
+    [self didClearFlush];
     
     // return no error if we flush happily
     return nil;
 }
 
-- (void)runAfterFlushHooks
+- (void)didClearFlush
 {
-    // grab a copy of the handlers and remove them, in case one of them re-flushes
-    NSArray *handlers = [self.afterFlushHandlers copy];
-    [self.afterFlushHandlers removeAllObjects];
+    // grab a copy of the handlers and remove them, in case one re-flushes
+    NSArray *handlers = [self.clearFlushHandlers copy];
+    [self.clearFlushHandlers removeAllObjects];
     
-    // call all the after flush handlers
+    // call all the clear flush handlers
     for(void(^handler)(void) in handlers) {
         handler();
     }
@@ -181,20 +181,24 @@
     [self.currentComputation onInvalidate:handler];
 }
 
-- (void)beforeFinishingFlush:(void (^)(void))handler
-{
-    NSParameterAssert(handler);
-    
-    [self.beforeFinishingFlushHandlers addObject:handler];
-    [self scheduleFlush];
-}
-
 - (void)afterFlush:(void (^)(void))handler
 {
     NSParameterAssert(handler);
     
     [self.afterFlushHandlers addObject:handler];
     [self scheduleFlush];
+}
+
+- (void)clearFlush:(void (^)(void))handler
+{
+    NSParameterAssert(handler);
+   
+    if(!self.flushScheduled) {
+        handler();
+    } else {
+        [self.clearFlushHandlers addObject:handler];
+        [self flush];
+    }
 }
 
 # pragma mark - Accessors

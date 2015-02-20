@@ -16,9 +16,9 @@
 /** Computations waiting to be flushed */
 @property (strong, nonatomic) NSMutableArray *pendingComputations;
 /** Blocks to be called before the current flush finishes */
-@property (strong, nonatomic) NSMutableArray *beforeFinishingFlushHandlers;
-/** Blocks to be called once the flush completes */
 @property (strong, nonatomic) NSMutableArray *afterFlushHandlers;
+/** Blocks to be called once the flush completes */
+@property (strong, nonatomic) NSMutableArray *clearFlushHandlers;
 /** @c YES when a pending computation flush is scheduled or is in progress */
 @property (assign, nonatomic) BOOL flushScheduled;
 /** @c YES when pending computations are being flushed */

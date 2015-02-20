@@ -105,26 +105,27 @@
 - (void)onInvalidate:(void(^)(MTRComputation *computation))handler;
 
 /** 
- @brief Schedules a handler to runs during the next flush after all computations compute
+ @brief Schedules a handler to run during the next flush after any computations
 
- This method also schedules a flush if there isn't already one scheduled. If this handler 
- invalidates other computations, they will run during immediately during the calling flush.
- 
- @param handler The handler to schedule
-*/
-
-- (void)beforeFinishingFlush:(void(^)(void))handler;
-
-/**
- @brief Schedules a handler to run after the next, or current, flush
- 
- This method also schedules a flush if there isn't already one scheduled. The handler is 
- discarded after it's called. Call @c -aferFlush: again to schedule a repeat handler.
+ This method also schedules a flush if there isn't already one scheduled. Each handler is
+ called once (unless re-scheduled), and then any computations it invalidates are re-run
+ immediately.
  
  @param handler The handler to schedule
 */
 
 - (void)afterFlush:(void(^)(void))handler;
+
+/**
+ @brief Schedules a handler to run as soon as it can be guaranteed that no flush is active
+
+ If there is no scheduled flush, the handler is called immediately. Otherwise, the scheduled
+ flush is run immediately and the handler called back when it's finished.
+ 
+ @param handler The handler to schedule
+*/
+
+- (void)clearFlush:(void(^)(void))handler;
 
 @end
 
