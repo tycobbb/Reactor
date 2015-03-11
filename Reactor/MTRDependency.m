@@ -43,8 +43,10 @@
     // if we don't have this computation as a dependent, then let's add it
     if(!self.dependentsMap[computation.identifier]) {
         self.dependentsMap[computation.identifier] = computation;
+        
+        __weak typeof(self) welf = self;
         [computation onInvalidate:^(MTRComputation *computation) {
-            [self.dependentsMap removeObjectForKey:computation.identifier];
+            [welf.dependentsMap removeObjectForKey:computation.identifier];
         }];
         
         return YES;

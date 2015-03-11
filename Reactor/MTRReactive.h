@@ -19,6 +19,17 @@
 @protocol MTRReactive <NSObject> @optional
 
 /**
+ @brief Destroys this object's dependencies
+ 
+ This method is provided implicitly by adopting this protocol.
+ 
+ Dependencies will be recreated on-demand as if reactions access any of this object's
+ reactive properties.
+*/
+
+- (void)destroyDependencies;
+
+/**
  @brief Blacklist non-reactive keys
 
  Any properties whose keys are not returned are assosciated with an implicit dependency

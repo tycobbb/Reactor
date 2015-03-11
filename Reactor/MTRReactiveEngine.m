@@ -32,11 +32,17 @@
     free(classes);
 }
 
-/*
- Add reactivity to any appropriate properties on the class
-*/
-
+/* Adds implicit reactivity to class */
 + (void)reactify:(Class<MTRReactive>)klass
+{
+    // supply the destroyDependencies method dynamically
+    class_addMethod(klass, @selector(destroyDependencies), (IMP)mtr_destroyDependencies, "v@:");
+    // swizzle the objects property accesors to use dependencies
+    [self reactifyProperties:klass];
+}
+
+/* Adds reactivity to any appropriate properties on the class */
++ (void)reactifyProperties:(Class<MTRReactive>)klass
 {
     NSArray *whitelist = mtr_invokeKeygenMethod(klass, @selector(reactiveProperties:));
     NSArray *blacklist = mtr_invokeKeygenMethod(klass, @selector(nonreactiveProperties:));
@@ -182,34 +188,6 @@ NS_INLINE void mtr_changed(id other, NSString *name)
 }
 
 /*
- Looks up the dependency on `other` for this property
- 
- If `lazy` is `YES`, then the dependency (and the dependency collection) are created if they don't
- already exist. Otherwise, this method only returns pre-existing dependencies.
-*/
-
-NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL lazy)
-{
-    static const char *mtr_dependenciesKey;
-    
-    // lazy-load the dependencies dictionary
-    NSMutableDictionary *dependencies = objc_getAssociatedObject(other, mtr_dependenciesKey);
-    if(lazy && !dependencies) {
-        dependencies = [NSMutableDictionary new];
-        objc_setAssociatedObject(other, mtr_dependenciesKey, dependencies, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    
-    // lazy load the dependency for this property name
-    MTRDependency *dependency = dependencies[name];
-    if(lazy && !dependency) {
-        dependency = [MTRDependency new];
-        dependencies[name] = dependency;
-    }
-    
-    return dependency;
-}
-
-/*
  Swizzles the getter and setter for the property
  
  Typechecks the property to provide the correct implementations, calling MTRSwizzleProperty with
@@ -274,6 +252,41 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
         printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
         printf("\tb. Submit a pull request\n");
     }
+}
+
+# pragma mark - Depenencies
+
+const char mtr_dependenciesKey;
+
+/*
+ Looks up the dependency on `other` for this property
+ 
+ If `lazy` is `YES`, then the dependency (and the dependency collection) are created if they don't
+ already exist. Otherwise, this method only returns pre-existing dependencies.
+*/
+
+NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL lazy)
+{
+    // lazy-load the dependencies dictionary
+    NSMutableDictionary *dependencies = objc_getAssociatedObject(other, &mtr_dependenciesKey);
+    if(lazy && !dependencies) {
+        dependencies = [NSMutableDictionary new];
+        objc_setAssociatedObject(other, &mtr_dependenciesKey, dependencies, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    // lazy load the dependency for this property name
+    MTRDependency *dependency = dependencies[name];
+    if(lazy && !dependency) {
+        dependency = [MTRDependency new];
+        dependencies[name] = dependency;
+    }
+    
+    return dependency;
+}
+
+NS_INLINE void mtr_destroyDependencies(id self, SEL _cmd)
+{
+    objc_setAssociatedObject(self, &mtr_dependenciesKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end
