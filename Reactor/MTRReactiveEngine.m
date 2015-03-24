@@ -247,6 +247,10 @@ NS_INLINE void mtr_changed(id other, NSString *name)
         MTRSwizzleProperty(CGPoint);
     } else if(strcmp(type, @encode(CGSize)) == 0) {
         MTRSwizzleProperty(CGSize);
+    } else if(strcmp(type, @encode(CGVector)) == 0) {
+        MTRSwizzleProperty(CGVector);
+    } else if(strcmp(type, @encode(NSRange)) == 0) {
+        MTRSwizzleProperty(NSRange);
     } else {
         printf("%s: %s - MTRReactive doesn't support properties of this type\n", class_getName(klass), property.UTF8String);
         printf("\ta. Constrain reactivity using +nonreactiveProperties: or +reactiveProperties:\n");
