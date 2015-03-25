@@ -67,7 +67,7 @@
         [[MTRComputation alloc] initWithId:identifier block:block parent:self.currentComputation];
     
     if(self.isActive) {
-        [self onInvalidate:^(MTRComputation *computation) {
+        [self onInvalidate:^(MTRComputation *parent) {
             [computation stop];
         }];
     }
