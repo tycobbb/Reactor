@@ -42,6 +42,7 @@
     
     // if we don't have this computation as a dependent, then let's add it
     if(!self.dependentsMap[computation.identifier]) {
+        MTRLogComputation(computation, @"did depend on: %@", self.tag);
         self.dependentsMap[computation.identifier] = computation;
         
         __weak typeof(self) welf = self;

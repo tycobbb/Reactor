@@ -8,6 +8,7 @@
 
 #import "MTRReactor.h"
 #import "MTRReactiveEngine.h"
+#import "MTRLogging.h"
 
 @interface MTRReactor ()
 @property (strong, nonatomic) MTRComputation *currentComputation;

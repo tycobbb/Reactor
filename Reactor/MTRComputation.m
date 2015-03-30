@@ -51,6 +51,7 @@
 {
     self.isInvalid = NO;
     [[MTRReactor reactor] computation:self executeWithBlock:^{
+        MTRLogComputation(self, @"computing");
         self.block(self);
     }];
 }
@@ -62,6 +63,7 @@
     // repeatedly run the computation until it stops invalidating itself or is stopped
     // if a computation invalidates itself every time, this will be an infinite loop
     while(self.isInvalid && !self.isStopped) {
+        MTRLogComputation(self, @"recomupting");
         [self compute];
     }
     
@@ -71,6 +73,7 @@
 - (void)stop
 {
     if(!self.isStopped) {
+        MTRLogComputation(self, @"was stopped");
         // we only need to stop once
         self.isStopped = YES;
         // invalidate to clean up any relationships holding on to this computation
@@ -85,7 +88,8 @@
     if(self.isInvalid) {
         return;
     }
-    
+   
+    MTRLogComputation(self, @"was invalidated");
     if(!self.isRecomputing && !self.isStopped) {
         [[MTRReactor reactor] scheduleComputation:self];
     }
@@ -116,6 +120,15 @@
             handler(self);
         }];
     }
+}
+
+@end
+
+@implementation MTRComputation (Debugging)
+
+- (void)track
+{
+    [[MTRLogger logger] track:self];
 }
 
 @end

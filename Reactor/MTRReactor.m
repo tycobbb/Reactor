@@ -67,6 +67,7 @@
         [[MTRComputation alloc] initWithId:identifier block:block parent:self.currentComputation];
     
     if(self.isActive) {
+        MTRLogComputation(computation, @"will stop on invalidation of: %@", self.currentComputation.identifier);
         [self onInvalidate:^(MTRComputation *parent) {
             [computation stop];
         }];
@@ -96,7 +97,7 @@
     // update the current computation
     self.currentComputation = computation;
     self.isComputing = YES;
-    
+   
     block();
     
     // reset the computation
@@ -108,6 +109,8 @@
 
 - (void)scheduleComputation:(MTRComputation *)computation
 {
+    MTRLogComputation(computation, @"was scheduled");
+    
     [self scheduleFlush];
     [self.pendingComputations addObject:computation];
 }
@@ -115,6 +118,7 @@
 - (void)scheduleFlush
 {
     if(!self.flushScheduled) {
+        MTRLog(@"scheduled flush");
         dispatch_async(dispatch_get_main_queue(), ^{
             [self flush];
         });
@@ -124,45 +128,56 @@
 
 - (NSError *)flush
 {
+    NSError *error = nil;
+    
     // check flushing preconditions
     if(self.isFlushing) {
-        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush while already flushing" }];
+        error = [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush while already flushing" }];
     }
     else if(self.isComputing) {
-        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush inside a computation." }];
-    }
-    
-    self.flushScheduled = YES;
-    self.isFlushing = YES;
-    
-    while(self.pendingComputations.count || self.afterFlushHandlers.count) {
-        
-        // recompute all the computations
-        while(self.pendingComputations.count) {
-            // shift off the first computation
-            MTRComputation *computation = [self.pendingComputations mtr_shift];
-            [computation recompute];
-        }
-        
-        if(self.afterFlushHandlers.count) {
-            // after flush handlers can invalidate more computations
-            void(^handler)(void) = [self.afterFlushHandlers mtr_shift];
-            handler();
-        }
+        error = [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush inside a computation." }];
     }
    
-    // mark the flush as complete
-    self.flushScheduled = NO;
-    self.isFlushing = NO;
+    // if we encountered an error then just log it
+    if(error) {
+        MTRLog(@"%@", error);
+    }
+    // otherwise run through the flush cycle
+    else {
+        MTRLog(@"did begin flushing");
+        
+        self.flushScheduled = YES;
+        self.isFlushing = YES;
+        
+        while(self.pendingComputations.count || self.afterFlushHandlers.count) {
+            // recompute all the computations
+            while(self.pendingComputations.count) {
+                // shift off the first computation
+                MTRComputation *computation = [self.pendingComputations mtr_shift];
+                [computation recompute];
+            }
+            
+            if(self.afterFlushHandlers.count) {
+                // after flush handlers can invalidate more computations
+                void(^handler)(void) = [self.afterFlushHandlers mtr_shift];
+                handler();
+            }
+        }
+       
+        // mark the flush as complete
+        self.flushScheduled = NO;
+        self.isFlushing = NO;
+        
+        [self didClearFlush];
+    }
     
-    [self didClearFlush];
-    
-    // return no error if we flush happily
-    return nil;
+    return error;
 }
 
 - (void)didClearFlush
 {
+    MTRLog(@"did finish flushing");
+    
     // grab a copy of the handlers and remove them, in case one re-flushes
     NSArray *handlers = [self.clearFlushHandlers copy];
     [self.clearFlushHandlers removeAllObjects];

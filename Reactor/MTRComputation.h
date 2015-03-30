@@ -14,19 +14,14 @@
 
 /** Responsible for responding to scheduling and configuration events */
 @property (weak, nonatomic) id<MTRComputationDelegate> delegate;
-
 /** A unique identifier for this computation */
 @property (nonatomic, readonly) id identifier;
-
 /** The enclosing computation, if this was triggered inside another computation */
 @property (weak, nonatomic, readonly) MTRComputation *parent;
-
 /** @c YES if the computation has been stopped. */
 @property (nonatomic, readonly) BOOL isStopped;
-
 /** @c YES if the computation has been invalidated (and not yet rerun), or if it has been stopped */
 @property (nonatomic, readonly) BOOL isInvalid;
-
 /** @c YES until the computation has run once (in @c -autorun: ) */
 @property (nonatomic, readonly) BOOL isFirstRun;
 
@@ -70,5 +65,18 @@
 */
 
 - (void)onInvalidate:(void(^)(MTRComputation *))handler;
+
+@end
+
+@interface MTRComputation (Debugging)
+
+/**
+ @brief Tracks this computation's lifecycle in the console
+ 
+ By default, information about computation lifecycle is not logged. You can view lifecycle output
+ for this computation by calling this method during its @c autorun.
+*/
+
+- (void)track;
 
 @end

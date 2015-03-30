@@ -50,6 +50,7 @@
     [MTRReactor autorun:self action:@selector(tick:)];
     
     [MTRReactor autorun:^(MTRComputation *computation) {
+        [computation track];
         self.responseLabel.text = [self respondToThoughts:self.thoughts forLawyer:lawyer];
     }];
     

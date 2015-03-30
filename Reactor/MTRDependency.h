@@ -12,8 +12,10 @@
 
 @interface MTRDependency : NSObject
 
-/** @c YES if this depdendency has one or more dependent computations. */
+/** An optional tag used in logging */
+@property (copy, nonatomic) id tag;
 
+/** @c YES if this depdendency has one or more dependent computations. */
 @property (nonatomic, readonly) BOOL hasDependents;
 
 /**

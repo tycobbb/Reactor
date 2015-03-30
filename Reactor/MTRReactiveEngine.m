@@ -282,6 +282,7 @@ NS_INLINE MTRDependency * mtr_dependencyForName(id other, NSString *name, BOOL l
     MTRDependency *dependency = dependencies[name];
     if(lazy && !dependency) {
         dependency = [MTRDependency new];
+        dependency.tag = name;
         dependencies[name] = dependency;
     }
     
