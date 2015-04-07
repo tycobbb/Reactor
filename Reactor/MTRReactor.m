@@ -88,6 +88,15 @@
     self.currentComputation = previous;
 }
 
+- (void)disabled:(void (^)(void))block
+{
+    [self nonreactive:^{
+        self.isDisabled = YES;
+        block();
+        self.isDisabled = NO;
+    }];
+}
+
 - (void)computation:(MTRComputation *)computation executeWithBlock:(void (^)(void))block
 {
     // save the current computation
@@ -97,7 +106,7 @@
     // update the current computation
     self.currentComputation = computation;
     self.isComputing = YES;
-   
+    
     block();
     
     // reset the computation
@@ -128,24 +137,15 @@
 
 - (NSError *)flush
 {
-    NSError *error = nil;
-    
     // check flushing preconditions
-    if(self.isFlushing) {
-        error = [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush while already flushing" }];
-    }
-    else if(self.isComputing) {
-        error = [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush inside a computation." }];
-    }
-   
+    NSError *error = [self flushPermissionsFailure];
+    
     // if we encountered an error then just log it
     if(error) {
         MTRLog(@"%@", error);
     }
     // otherwise run through the flush cycle
     else {
-        MTRLog(@"did begin flushing");
-        
         self.flushScheduled = YES;
         self.isFlushing = YES;
         
@@ -163,7 +163,7 @@
                 handler();
             }
         }
-       
+        
         // mark the flush as complete
         self.flushScheduled = NO;
         self.isFlushing = NO;
@@ -176,8 +176,6 @@
 
 - (void)didClearFlush
 {
-    MTRLog(@"did finish flushing");
-    
     // grab a copy of the handlers and remove them, in case one re-flushes
     NSArray *handlers = [self.clearFlushHandlers copy];
     [self.clearFlushHandlers removeAllObjects];
@@ -186,6 +184,19 @@
     for(void(^handler)(void) in handlers) {
         handler();
     }
+}
+
+- (NSError *)flushPermissionsFailure
+{
+    if(self.isDisabled) {
+        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Attempted to -flush while reactor is disabled" }];
+    } else if(self.isFlushing) {
+        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush while already flushing" }];
+    } else if(self.isComputing) {
+        return [NSError errorWithDomain:MTRReactorFlushError code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Can't call -flush inside a computation." }];
+    }
+    
+    return nil;
 }
 
 # pragma mark - Hooks
@@ -207,12 +218,21 @@
 - (void)clearFlush:(void (^)(void))handler
 {
     NSParameterAssert(handler);
-   
+    
     if(!self.flushScheduled) {
         handler();
     } else {
         [self.clearFlushHandlers addObject:handler];
         [self flush];
+    }
+}
+
+# pragma mark - Setters
+
+- (void)setCurrentComputation:(MTRComputation *)currentComputation
+{
+    if(!self.isDisabled) {
+        _currentComputation = currentComputation;
     }
 }
 
@@ -228,7 +248,7 @@
 //
 
 NSString * const MTRReactorError = @"MTRReactorError";
-NSString * const MTRReactorFlushError = @"MTRReachingFlushError";
+NSString * const MTRReactorFlushError = @"MTRReactorFlushError";
 
 void MTRAssert(BOOL condition, NSString *format, ...)
 {
@@ -262,4 +282,3 @@ void MTRAssert(BOOL condition, NSString *format, ...)
 }
 
 @end
-

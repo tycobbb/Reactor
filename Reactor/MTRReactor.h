@@ -23,7 +23,7 @@
  @brief The computation currently being computed, if any.
  
  If there is no active computation, this property returns @c nil. Otherwise, this is
- the innermost triggered computation. Dependencies depended on while the reactor 
+ the innermost triggered computation. Dependencies depended on while the reactor
  is active will by default add this as a dependent.
 */
 
@@ -61,13 +61,26 @@
 /**
  @brief Executes a block that won't trigger any dependencies
  
- This is useful for running non-reactive code within a computation that may trigger 
- dependencies you'd rather not attach to the computation.
+ This is useful for running code within a computation that would normally trigger
+ dependencies that you'd rather not attach to the computation.
  
- @param block The non-reactive code
+ @param block The non-reactive block of code
 */
 
 + (void)nonreactive:(void(^)(void))block;
+
+/**
+ @brief Executes a block of code that permits @em no reactivity
+ 
+ This method is analogous to @c -nonreactive, in the sense that dependencies are
+ not assosciated to current computation. However, this method has the added property
+ that any computations created as a result of the @c block will @em not be made
+ reactive, and thus will only execute their first run.
+ 
+ @param block The reactivity-disabled block of code
+*/
+
+- (void)disabled:(void(^)(void))block;
 
 /**
  @brief Returns the shared reactor
@@ -82,9 +95,9 @@
 
 /**
  @brief Immediately runs any scheduled reactive updates
-
+ 
  Normally, @c MTRReactor schedules @c -flush to be called during the next run-loop
- after a computation is invalidated. Users may call this method if its necessary 
+ after a computation is invalidated. Users may call this method if its necessary
  to flush immediately.
  
  Calling @c -flush inside a computation or during an existing @c -flush does nothing
@@ -99,14 +112,14 @@
  This method throws an exception if there is no current computation. Otherwise,
  when the computation is invalidated it will call this block.
  
- @brief handler The handler to call on invalidation 
+ @brief handler The handler to call on invalidation
 */
 
 - (void)onInvalidate:(void(^)(MTRComputation *computation))handler;
 
-/** 
+/**
  @brief Schedules a handler to run during the next flush after any computations
-
+ 
  This method also schedules a flush if there isn't already one scheduled. Each handler is
  called once (unless re-scheduled), and then any computations it invalidates are re-run
  immediately.
@@ -118,7 +131,7 @@
 
 /**
  @brief Schedules a handler to run as soon as it can be guaranteed that no flush is active
-
+ 
  If there is no scheduled flush, the handler is called immediately. Otherwise, the scheduled
  flush is run immediately and the handler called back when it's finished.
  

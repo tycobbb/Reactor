@@ -26,6 +26,8 @@
 @property (assign, nonatomic) BOOL isFlushing;
 /** @c YES when running a computation, either reactively or non-reactively */
 @property (assign, nonatomic) BOOL isComputing;
+/** @c YES if the reactivity is disabled completely */
+@property (assign, nonatomic) BOOL isDisabled;
 @end
 
 @interface MTRReactor (Scheduling)
@@ -37,7 +39,7 @@
  of pending computations on the next frame.
  
  @param computation The computation to schedule
-*/
+ */
 
 - (void)scheduleComputation:(MTRComputation *)computation;
 
@@ -49,7 +51,7 @@
  
  @param computation The computation that's executing
  @param block       The computation block to call
-*/
+ */
 
 - (void)computation:(MTRComputation *)computation executeWithBlock:(void(^)(void))block;
 
@@ -59,11 +61,11 @@
 
 /**
  @brief Pops the object off the front of the array
-
+ 
  If there are no objects left, returns nil.
  
  @return The first object in the array.
-*/
+ */
 
 - (id)mtr_shift;
 
