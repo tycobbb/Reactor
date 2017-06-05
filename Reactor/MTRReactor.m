@@ -25,8 +25,6 @@
 
 - (instancetype)init
 {
-    [MTRReactiveEngine engage];
-    
     if(self = [super init]) {
         _pendingComputations = [NSMutableArray new];
         _afterFlushHandlers  = [NSMutableArray new];
@@ -34,6 +32,18 @@
     }
     
     return self;
+}
+
+# pragma mark - Registration
+
++ (void)engage
+{
+    [MTRReactiveEngine engage];
+}
+
++ (void)reactify:(Class<MTRReactive>)klass
+{
+    [MTRReactiveEngine reactify:klass];
 }
 
 # pragma mark - Execution

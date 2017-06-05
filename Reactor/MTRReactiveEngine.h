@@ -8,6 +8,7 @@
 
 @import Foundation;
 
+@protocol MTRReactive;
 @interface MTRReactiveEngine : NSObject
 
 /**
@@ -18,5 +19,13 @@
 */
 
 + (void)engage;
+
+/**
+ @brief Manually adds reactivity to marked classes
+ 
+ Use this method if you want to have on-demand reactification.
+ */
+
++ (void)reactify:(Class<MTRReactive>)klass;
 
 @end

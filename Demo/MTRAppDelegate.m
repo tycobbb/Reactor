@@ -7,11 +7,14 @@
 //
 
 #import "MTRAppDelegate.h"
+#import "MTRReactor.h"
 
 @implementation MTRAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [MTRReactor engage];
+    
     return YES;
 }
 
