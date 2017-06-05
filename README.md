@@ -71,6 +71,12 @@ If you want to whitelist/blacklist certain properties, you can implement *either
 There are a few caveats to keep in mind:
 - Just because your superclass adopts `MTRReactive` doesn't mean your properties are also reactive. Every class that wants reactivity must adopt the protocol independently.
 - Properties which don't have a setter won't be reactive, as there's no way to invalidate its dependency.
+- You'll need to register classes conforming to `MTRReactive`, and there are two ways of doing that:
+    1. Automatically, sending a message to `[MTRReactiveEngine engage]`.
+    You can do that, for example, on `- (BOOL)applicationDidFinishLaunching:`.
+    
+    2. On-demand, sending a message to `[MTRReactiveEngine reactify:self.class]`.
+    You can override `+ (void)initialize` and add that message.
 
 You can then react to your objects' properties in computations like normal:
 ```Objective-C
