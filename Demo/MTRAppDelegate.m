@@ -7,11 +7,14 @@
 //
 
 #import "MTRAppDelegate.h"
+#import "MTRReactiveEngine.h"
 
 @implementation MTRAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [MTRReactiveEngine engage];
+    
     return YES;
 }
 
