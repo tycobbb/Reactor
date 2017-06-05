@@ -25,8 +25,6 @@
 
 - (instancetype)init
 {
-    [MTRReactiveEngine engage];
-    
     if(self = [super init]) {
         _pendingComputations = [NSMutableArray new];
         _afterFlushHandlers  = [NSMutableArray new];
