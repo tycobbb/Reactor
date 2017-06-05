@@ -8,6 +8,7 @@
 
 #import "MTRComputation.h"
 
+@protocol MTRReactive;
 @interface MTRReactor : NSObject
 
 /**
@@ -28,6 +29,23 @@
 */
 
 @property (nonatomic, readonly) MTRComputation *currentComputation;
+
+/**
+ @brief Adds reactivity to marked classes
+ 
+ Sweeps the class list for classes adopting @c MTRReactive, and swizzles their
+ property setters/getters to add reactivity.
+ */
+
++ (void)engage;
+
+/**
+ @brief Manually adds reactivity to marked classes
+ 
+ Use this method if you want to have on-demand reactification.
+ */
+
++ (void)reactify:(Class<MTRReactive>)klass;
 
 /**
  @brief Starts a new computation with the given block

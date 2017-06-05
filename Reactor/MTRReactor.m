@@ -34,6 +34,18 @@
     return self;
 }
 
+# pragma mark - Registration
+
++ (void)engage
+{
+    [MTRReactiveEngine engage];
+}
+
++ (void)reactify:(Class<MTRReactive>)klass
+{
+    [MTRReactiveEngine reactify:klass];
+}
+
 # pragma mark - Execution
 
 + (MTRComputation *)autorun:(void (^)(MTRComputation *))block
